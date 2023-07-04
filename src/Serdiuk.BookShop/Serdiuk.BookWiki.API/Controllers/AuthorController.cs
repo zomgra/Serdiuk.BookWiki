@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Serdiuk.API.Controllers.Base;
 using Serdiuk.BookShop.Domain.Models.Requests.Authors;
 using Serdiuk.Services.Interfaces;
@@ -15,7 +16,7 @@ namespace Serdiuk.API.Controllers
         {
             _authorService = authorService;
         }
-
+        [Authorize(Policy = "Admin")]
         [HttpPost("create")]
         public async Task<IActionResult> CreateAuthorAsync(CreateAuthorRequest request)
         {

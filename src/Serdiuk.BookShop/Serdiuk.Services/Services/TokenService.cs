@@ -16,11 +16,13 @@ namespace Serdiuk.Services.Services
     {
         private readonly IConfiguration _config;
         private readonly AppDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public TokenService(IConfiguration config, AppDbContext context)
+        public TokenService(IConfiguration config, AppDbContext context, UserManager<ApplicationUser> userManager)
         {
             _config = config;
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task AddNewRefreshToken(string token, string userId)
@@ -35,22 +37,24 @@ namespace Serdiuk.Services.Services
             await _context.SaveChangesAsync();
         }
 
-        public string GenerateAccessToken(IdentityUser user, IConfiguration config)
+        public async Task<string> GenerateAccessTokenAsync(ApplicationUser user, IConfiguration config)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
 
+            var roles = await _userManager.GetRolesAsync(user);
             var key = Encoding.ASCII.GetBytes(config.GetSection("JwtConfig:SecretKey").Value);
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim("Id", user.Id),
+                    new Claim(ClaimTypes.Role, string.Join(",",roles)),
                     new Claim(JwtRegisteredClaimNames.Sub, user.Id),
                     new Claim(JwtRegisteredClaimNames.Email, user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToUniversalTime().ToString()),
                 }),
-                Expires = DateTime.Now.AddMinutes(1),
+                Expires = DateTime.Now.AddMinutes(10000),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
             };
             var token = jwtTokenHandler.CreateToken(tokenDescriptor);

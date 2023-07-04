@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Serdiuk.BookWiki.Domain\Serdiuk.BookShop.Domain.csproj" />
     <ProjectReference Include="..\Serdiuk.Persistance\Serdiuk.Persistance.csproj" />
     <ProjectReference Include="..\Serdiuk.Services\Serdiuk.Services.csproj" />
   </ItemGroup>

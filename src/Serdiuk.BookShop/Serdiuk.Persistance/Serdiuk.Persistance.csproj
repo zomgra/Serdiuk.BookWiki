@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Serdiuk.Authorization.Domain\Serdiuk.BookShop.Domain.csproj" />
+    <ProjectReference Include="..\Serdiuk.BookWiki.Domain\Serdiuk.BookShop.Domain.csproj" />
   </ItemGroup>
 
 </Project>

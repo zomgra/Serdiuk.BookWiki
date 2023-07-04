@@ -46,7 +46,7 @@ namespace Serdiuk.API.Controllers
                     Result = false,
                 });
 
-            var jwtToken = _tokenService.GenerateAccessToken(userExists, _configuration);
+            var jwtToken = await _tokenService.GenerateAccessTokenAsync(userExists, _configuration);
             var refreshToken = _tokenService.GenerateRefreshToken();
 
             await _tokenService.AddNewRefreshToken(refreshToken, userExists.Id);
@@ -83,7 +83,7 @@ namespace Serdiuk.API.Controllers
                     Errors = new() { "Server error, try again" },
                 });
             }
-            var token = _tokenService.GenerateAccessToken(user, _configuration); //Token for front-end (React, Angular etc)
+            var token = await _tokenService.GenerateAccessTokenAsync(user, _configuration); //Token for front-end (React, Angular etc)
             var refresh = _tokenService.GenerateRefreshToken();
             //await _signInManager.SignInAsync(user, false); For ASP.Net MVC architecture
 
@@ -125,7 +125,7 @@ namespace Serdiuk.API.Controllers
             }
             var user = await _userService.GetUserById(refreshToken.UserId);
 
-            var newAccessToken = _tokenService.GenerateAccessToken(user, _configuration);
+            var newAccessToken = await _tokenService.GenerateAccessTokenAsync(user, _configuration);
             var newRefreshToken = _tokenService.GenerateRefreshToken();
 
             _tokenService.SetRevokedRefreshToken(refreshToken);

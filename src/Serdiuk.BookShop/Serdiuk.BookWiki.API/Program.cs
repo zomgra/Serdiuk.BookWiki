@@ -9,6 +9,7 @@ using Serdiuk.Persistance.Data;
 using Serdiuk.Persistance.Mapper;
 using Serdiuk.Services.Interfaces;
 using Serdiuk.Services.Services;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +38,13 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 {
     opt.UseSqlite(builder.Configuration.GetConnectionString("SQLite"));
 });
+
+builder.Services.AddAuthorization(options =>
+      options.AddPolicy("Admin", b => b.RequireAssertion(context =>
+      {
+          return context.User.FindFirstValue(ClaimTypes.Role).Contains(AppData.Administrator);
+      })
+      ));
 
 builder.Services.AddAuthentication(option =>
 {

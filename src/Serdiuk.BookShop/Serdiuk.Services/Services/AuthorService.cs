@@ -33,6 +33,7 @@ namespace Serdiuk.Services.Services
                     FirstName = request.FirstName,
                     LastName = request.LastName
                 };
+                await _context.Authors.AddAsync(author);
                 await _context.SaveChangesAsync(CancellationToken.None);
                 return Result.Ok();
             }
