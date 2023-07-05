@@ -1,0 +1,53 @@
+﻿@using Serdiuk.BookShop.Domain.Models.Identity.DTO
+@model LoginRequestDto
+@inject IConfiguration _config;
+
+@{
+    string message = String.Empty;
+
+    if(!string.IsNullOrWhiteSpace(message)){
+    <label>@message</label>
+    }
+}
+
+
+
+<div class="row">
+    <form id="loginForm" class="col-3" onsubmit="login(event, @message)">
+        <input class="form-control form-text" name="email" />
+        <input class="form-control form-text" type="password" name="password" />
+        <button class="btn btn-success" type="submit">Submit</button>
+    </form>
+</div>
+
+@section Scripts {
+    @{string Url = _config.GetSection("API:Account").Value + "/Login";}
+    <script>
+        function login(e, message){
+            e.preventDefault();
+            var formData = {
+                email: $("input[name='email']").val(),
+                password: $("input[name='password']").val()
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url',
+                data: JSON.stringify(formData),
+                processData: false,
+                contentType: 'application/json',
+                success: async function (response) {
+                    
+                    if(response.result){
+                        await TokenClass.updateTokens(response.token, response.refresh)
+                        window.location.href = '/'
+                    }
+                },
+                error: function (xhr, status, error) {
+                   
+                    message = 'Error with status: '+status;
+                }
+            })
+        }
+    </script>
+}

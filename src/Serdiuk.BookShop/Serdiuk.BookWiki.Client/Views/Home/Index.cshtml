@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+@*@section Scripts {
+    <script>
+        $(document).ready(function () {
+            isAuthorize();
+            isAdmin();
+        });
+
+       async function isAuthorize() {
+            isAuth = await TokenClass.canUseToken()
+
+                if (isAuth) {
+                    $("#isAuthDiv").show();
+                    $('#loginDiv').hide();
+                }
+            }
+        async function isAdmin() {
+           let canUseAdmin = TokenClass.adminCheck();
+           if(canUseAdmin) {
+               $('#adminDiv').show();
+           }
+        }
+    </script>
+}*@

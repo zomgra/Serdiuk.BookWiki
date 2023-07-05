@@ -10,12 +10,9 @@ using Serdiuk.Persistance.Mapper;
 using Serdiuk.Services.Interfaces;
 using Serdiuk.Services.Services;
 using System.Security.Claims;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-//builder.Services.AddControllersWithViews();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -23,6 +20,17 @@ builder.Services.AddSwaggerGen();
 var jwtConfig = new JwtConfig(builder.Configuration);
 
 builder.Services.AddAutoMapper(typeof(ApplicationMapper).Assembly);
+
+builder.Services.AddCors(x =>
+{
+    x.AddDefaultPolicy(b =>
+    {
+        b.AllowAnyMethod()
+        .AllowCredentials()
+        .AllowAnyHeader()
+        .WithOrigins("https://localhost:7288");
+    });
+});
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(c =>
 {
@@ -75,6 +83,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
