@@ -10,7 +10,7 @@ namespace Serdiuk.BookShop.Domain.Configurations
         {
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Data);
+            //builder.Property(x => x.Data);
         }
     }
 }

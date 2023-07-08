@@ -7,7 +7,7 @@ namespace Serdiuk.BookWiki.Client.Areas.Admin.Controllers
     {
         public IActionResult Index()
         {
-            return View(6);
+            return View();
         }
         public IActionResult AuthorCreate()
         {

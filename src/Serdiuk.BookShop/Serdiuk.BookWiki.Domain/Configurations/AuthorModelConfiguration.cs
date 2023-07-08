@@ -10,9 +10,9 @@ namespace Serdiuk.BookShop.Domain.Configurations
         {
             builder.HasKey(x => x.Id);
 
-            builder.HasMany(x => x.Books).WithMany(x => x.Authors);
-            builder.Property(x => x.FirstName);
-            builder.Property(x => x.LastName);
+            builder.HasMany(x => x.Books)
+                .WithMany(x => x.Authors);
+
         }
     }
 }

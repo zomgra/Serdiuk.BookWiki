@@ -1,0 +1,52 @@
+﻿@inject IConfiguration _config;
+@{
+    Layout = "_AdminLayout";
+    string message = string.Empty;
+}
+<div class="alert-success alert" style="display:none">
+    <h4>@message</h4>
+</div>
+
+<div id="adminPanel" style="display:none">
+    <form id="createAuthorForm" onsubmit="createAuthor(event)">
+        <input class="form-control" name="firstName" />
+        <input class="form-control" name="lastName" />
+        <button type="submit" class="">Create</button>
+    </form>
+</div>
+<div id="noAdmin">
+
+    <h1>Y not a admin</h1>
+
+</div>
+@section Scripts {
+    <script>
+        @{
+            string Url = _config.GetSection("API:Author").Value + "/create";
+        }
+            function createAuthor(event) {
+                event.preventDefault();
+
+                console.log({ 'Authorization': 'Bearer' + localStorage.getItem('access') })
+                var formData = {
+                    firstName: $('input[name="firstName"]').val(),
+                    lastName: $('input[name="lastName"]').val()
+                };
+                $.ajax({
+                    url: `@Url`,
+                    data: JSON.stringify(formData),
+                    contentType: "application/json",
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('access'),
+                    },
+                    method: 'POST',
+                    success: function (response) {
+                        console.log(response);
+                        let message = `Success creation author: ${formData.firstName} ${formData.lastName}`;
+                        $('.alert-success').html('<h4>' + message + '</h4>').show();
+                        $('.alert-success').show();
+                    }
+                })
+            }
+    </script>
+}

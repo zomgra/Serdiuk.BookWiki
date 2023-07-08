@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Serdiuk.Authorization.Web.Infrastructure;
 using Serdiuk.BookShop.Domain.IdentityModels;
 using Serdiuk.Persistance;
 using Serdiuk.Persistance.Data;
@@ -44,7 +42,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(c =>
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
-    opt.UseSqlite(builder.Configuration.GetConnectionString("SQLite"));
+     opt.UseSqlite(builder.Configuration.GetConnectionString("SQLite"), b=>b.MigrationsAssembly("Serdiuk.API"));
+    //opt.UseInMemoryDatabase("Test DB");
 });
 
 builder.Services.AddAuthorization(options =>

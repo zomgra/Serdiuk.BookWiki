@@ -1,0 +1,139 @@
+﻿@using Serdiuk.BookShop.Domain.Models
+@inject IConfiguration _config;
+
+@{
+    Layout = "_AdminLayout";
+    string message = string.Empty;
+}
+<div id="resultDiv" class="alert-success alert" style="display:none">
+    <h3>Success create book</h3>
+</div>
+<div id="adminPanel" style="display:none">
+    <form id="createBookForm" class="row" onsubmit="createBook(event)">
+        <div>
+            <div class="my-3 col">
+                <label for="bookInputName" class="form-label">Book name</label>
+                <input class="form-control " id="bookInputName" name="name" />
+            </div>
+            <div class="col my-3">
+                <select name="status" class="form-control">
+                    @foreach (var item in ViewBag.Status)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="col-3 my-3"> 
+                <input type="file" name="file" class="form-control"/>
+            </div>
+        </div>
+        <div class="my-3">
+            <label for="bookInputDescription" class="form-label">Book description</label>
+            <textarea class="form-control"rows="3" id="bookInputDescription" name="description" ></textarea>
+        </div>
+
+        <label for="checkboxContainer" class="form-label">Select authors</label>
+        <div id="checkboxContainer" class="row">
+        </div>
+        <button id="submitCreateBook" type="submit" class="btn btn-outline-success mt-5">Create</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        @{
+            string Url = _config.GetSection("API:Author").Value + "/get-all";
+        }
+            $(document).ready(function () {
+                $.ajax({
+                    url: '@Url',
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('access'),
+                    },
+                    success: function (response) {
+                        viewAuthorsCheckbox(response)
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error with loading authors');
+                        console.error(error);
+                    }
+                });
+            });
+
+        function createBook(event){
+            event.preventDefault();
+
+            @{
+                string CreateUrl = _config.GetSection("API:Book").Value + "/create";
+            }
+
+            let inputData = {
+                    name: $('input[name="name"]').val(),
+                    description: $('textarea[name="description"]').val(),
+                    file: $('input[name="file"]').prop('files')[0],
+                    status: $('select[name="status"]').val()
+            }
+            var formData = new FormData();
+            formData.append('file', $('input[name="file"]').prop('files')[0]); // 'file' - это имя, по которому сервер ожидает получить файл
+            let authors = selectedItems;
+            formData.append('authors', authors);
+            formData.append('name', inputData.name);
+            formData.append('status', inputData.status);
+            formData.append('description', inputData.description);
+            $('#submitCreateBook').hide();
+                $.ajax({
+                    url: '@CreateUrl',
+                    data: formData,
+                    method: 'POST',
+                    contentType: false,
+                    processData: false,
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('access'),
+                    },
+                    success: function(response){
+                        $('#resultDiv').show();
+                    }
+                })
+                .always(function(data){
+                    $('#submitCreateBook').show();
+                })
+        }
+        function viewAuthorsCheckbox(data) {
+            var checkboxContainer = $('#checkboxContainer');
+
+            $.each(data, function (index, item) {
+                var container = $('<div>').addClass('col-4 form-check');
+                var checkbox = $('<input type="checkbox">')
+                    .attr('id', item.id)
+                    .addClass('form-check-input')
+                    .on('change', function () {
+
+                        var itemId = $(this).attr('id');
+
+                        if ($(this).is(':checked')) {
+                            selectedItems.push(itemId);
+                        } else {
+                            var index = selectedItems.indexOf(itemId);
+                            if (index !== -1) {
+                                selectedItems.splice(index, 1);
+                            }
+                        }
+
+                        console.log(selectedItems);
+                    });
+
+                var label = $('<label>')
+                    .addClass('form-check-label')
+                    .attr('for', item.id)
+                    .text(item.firstName + ' ' + item.lastName);
+
+                container.append(checkbox);
+                container.append(label);
+                checkboxContainer.append(container);
+            })
+        }
+        var selectedItems = [];
+    </script>
+
+}

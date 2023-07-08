@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Serdiuk.BookShop.Domain.Configurations;
 using Serdiuk.BookShop.Domain.IdentityModels;
 using Serdiuk.BookShop.Domain.Models;
 using System.Reflection;
@@ -20,7 +21,11 @@ namespace Serdiuk.Persistance.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            builder.ApplyConfiguration(new BookModelConfiguration());
+            builder.ApplyConfiguration(new AuthorModelConfiguration());
+            builder.ApplyConfiguration(new ImageModelConfiguration());
+            builder.ApplyConfiguration(new CommentModelConfiguration());
+
         }
     }
 }

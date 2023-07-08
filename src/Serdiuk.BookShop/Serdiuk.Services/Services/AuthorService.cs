@@ -29,7 +29,6 @@ namespace Serdiuk.Services.Services
             {
                 var author = new Author
                 {
-                    Books = new(),
                     FirstName = request.FirstName,
                     LastName = request.LastName
                 };

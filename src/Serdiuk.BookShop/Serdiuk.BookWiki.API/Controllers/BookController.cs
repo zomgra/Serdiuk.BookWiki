@@ -33,7 +33,7 @@ namespace Serdiuk.API.Controllers
             return Ok();
         }
         [HttpPost("create")]
-        public async Task<IActionResult> CreateBookAsync(CreateBookRequest request)
+        public async Task<IActionResult> CreateBookAsync([FromForm] CreateBookRequest request)
         {
             var result = await _bookService.CreateBookAsync(request);
             HandleResult(result);

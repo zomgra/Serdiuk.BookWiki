@@ -48,6 +48,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/tokenclass.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 
     <script>
@@ -68,6 +69,7 @@
             let canUseAdmin = TokenClass.adminCheck();
             if (canUseAdmin) {
                 $('#adminDiv').show();
+                $('#adminPanel').show();
                 $('#noAdmin').hide();
             }
             else {

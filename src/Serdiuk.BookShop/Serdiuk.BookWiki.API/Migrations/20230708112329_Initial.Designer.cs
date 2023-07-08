@@ -2,17 +2,19 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Serdiuk.Persistance.Data;
 
 #nullable disable
 
-namespace Serdiuk.Authorization.Web.Infrastructure.Migrations
+namespace Serdiuk.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230708112329_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.19");
@@ -274,7 +276,7 @@ namespace Serdiuk.Authorization.Web.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("CoverId")
+                    b.Property<Guid?>("CoverId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
@@ -304,18 +306,16 @@ namespace Serdiuk.Authorization.Web.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("BookId")
+                    b.Property<Guid?>("BookId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Content")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Likes")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("WriterUsername")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -335,7 +335,6 @@ namespace Serdiuk.Authorization.Web.Infrastructure.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<byte[]>("Data")
-                        .IsRequired()
                         .HasColumnType("BLOB");
 
                     b.HasKey("Id");
@@ -415,9 +414,7 @@ namespace Serdiuk.Authorization.Web.Infrastructure.Migrations
                 {
                     b.HasOne("Serdiuk.BookShop.Domain.Models.Image", "Cover")
                         .WithMany()
-                        .HasForeignKey("CoverId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CoverId");
 
                     b.Navigation("Cover");
                 });
@@ -426,9 +423,7 @@ namespace Serdiuk.Authorization.Web.Infrastructure.Migrations
                 {
                     b.HasOne("Serdiuk.BookShop.Domain.Models.Book", "Book")
                         .WithMany("Comments")
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BookId");
 
                     b.Navigation("Book");
                 });
