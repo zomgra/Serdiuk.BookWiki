@@ -16,3 +16,10 @@ html {
 body {
   margin-bottom: 60px;
 }
+.stable-img {
+    width: 200px;
+    height: 200px;
+}
+.clickable{
+    cursor: pointer,
+}

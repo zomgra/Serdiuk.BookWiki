@@ -75,9 +75,11 @@
                     status: $('select[name="status"]').val()
             }
             var formData = new FormData();
-            formData.append('file', $('input[name="file"]').prop('files')[0]); // 'file' - это имя, по которому сервер ожидает получить файл
-            let authors = selectedItems;
-            formData.append('authors', authors);
+            formData.append('file', inputData.file);
+
+            selectedItems.forEach((item, index)=>{
+                formData.append(`authors[${index}]`,item)
+            })
             formData.append('name', inputData.name);
             formData.append('status', inputData.status);
             formData.append('description', inputData.description);

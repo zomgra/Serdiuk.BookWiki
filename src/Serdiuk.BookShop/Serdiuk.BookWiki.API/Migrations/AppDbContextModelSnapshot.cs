@@ -274,6 +274,9 @@ namespace Serdiuk.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid?>("CoverId")
                         .HasColumnType("TEXT");
 
@@ -293,6 +296,8 @@ namespace Serdiuk.API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ApplicationUserId");
+
                     b.HasIndex("CoverId");
 
                     b.ToTable("Books");
@@ -302,6 +307,9 @@ namespace Serdiuk.API.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ApplicationUserId")
                         .HasColumnType("TEXT");
 
                     b.Property<Guid?>("BookId")
@@ -317,6 +325,8 @@ namespace Serdiuk.API.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("BookId");
 
@@ -410,6 +420,10 @@ namespace Serdiuk.API.Migrations
 
             modelBuilder.Entity("Serdiuk.BookShop.Domain.Models.Book", b =>
                 {
+                    b.HasOne("Serdiuk.BookShop.Domain.IdentityModels.ApplicationUser", null)
+                        .WithMany("LikedBooks")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("Serdiuk.BookShop.Domain.Models.Image", "Cover")
                         .WithMany()
                         .HasForeignKey("CoverId");
@@ -419,6 +433,10 @@ namespace Serdiuk.API.Migrations
 
             modelBuilder.Entity("Serdiuk.BookShop.Domain.Models.Comment", b =>
                 {
+                    b.HasOne("Serdiuk.BookShop.Domain.IdentityModels.ApplicationUser", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("Serdiuk.BookShop.Domain.Models.Book", "Book")
                         .WithMany("Comments")
                         .HasForeignKey("BookId");
@@ -431,6 +449,13 @@ namespace Serdiuk.API.Migrations
                     b.HasOne("Serdiuk.BookShop.Domain.Models.Book", null)
                         .WithMany("Images")
                         .HasForeignKey("BookId");
+                });
+
+            modelBuilder.Entity("Serdiuk.BookShop.Domain.IdentityModels.ApplicationUser", b =>
+                {
+                    b.Navigation("Comments");
+
+                    b.Navigation("LikedBooks");
                 });
 
             modelBuilder.Entity("Serdiuk.BookShop.Domain.Models.Book", b =>

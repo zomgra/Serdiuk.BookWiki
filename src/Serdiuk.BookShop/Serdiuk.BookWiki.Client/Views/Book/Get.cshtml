@@ -1,0 +1,56 @@
+﻿@model Guid
+@inject IConfiguration _config
+
+<div id="bookContainer" class="row d-flex justify-content-center">
+    @Model
+</div>
+
+@section Scripts 
+{
+    <script>
+        @{
+            string Url = _config.GetSection("API:Book").Value + "/get-by-id";
+        }
+        $(document).ready(function(){
+            getBook('@Model');
+        })
+        function getBook(id){
+            $.ajax({
+                url: '@Url/'+id,
+                method:"GET",
+                success: function(data){
+                    loadBookToDoc(data);
+                }
+            })
+        }
+        function loadBookToDoc(book){
+            let container = $('#bookContainer');
+            let dataDiv = $('<div>').addClass('row border d-flex justify-content-center')
+
+            let cover = $('<img>')
+                .addClass('img-fluid mx-auto d-block')
+                .prop('src', 'data:image/png;base64,' + book.cover)
+
+            let coverDiv = $('<div>')
+                .addClass('col-4 m-2').append(cover);
+
+            let name = $('<h4>').addClass('').text(book.name);
+            let nameDiv = $('<div>').addClass('col-12 d-flex justify-content-center').append(name);
+
+            let desc = $('<p>').addClass('h6 lead').text(book.description);
+            let descDiv = $('<div>').addClass('col d-flex justify-content-center').append(desc);
+
+            let textDiv = $('<div>').addClass('col flex-column').append(nameDiv, descDiv);
+            dataDiv.append(coverDiv, textDiv).appendTo(container)
+
+            let imagesDiv = $('<div>').addClass('row d-flex justify-content-center')
+            let imageCarousel = $('<div>').addClass('carousel slide').prop('data-bs-ride',"carousel")
+            book.images.forEach(image=>{
+                let img = $('<img>').prop('src', 'data:image/png;base64,' + image.data)
+                let carouselItem = $('div').addClass('carousel-item ').append(img);
+                let carouselInner = $('<div>').addClass('carousel-inner').append(carouselItem).appendTo(imageCarousel);
+            })
+            imagesDiv.append(imageCarousel).appendTo(container);
+        }
+    </script>
+}

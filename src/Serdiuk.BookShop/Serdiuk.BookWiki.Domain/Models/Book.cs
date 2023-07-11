@@ -9,7 +9,7 @@
         public List<Image>? Images { get; set; } = new();
         public BookStatus Status { get; set; }
         public ICollection<Author>? Authors { get; set; }
-        public double Rating { get; set; }
+        public int Rating { get; set; }
         public List<Comment>? Comments { get; set; } = new();
     }
 }

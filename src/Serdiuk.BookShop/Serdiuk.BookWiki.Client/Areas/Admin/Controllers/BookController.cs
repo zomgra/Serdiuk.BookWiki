@@ -23,5 +23,13 @@ namespace Serdiuk.BookWiki.Client.Areas.Admin.Controllers
             ViewBag.Status = items;
             return View();
         }
+        public IActionResult UploadImage(Guid id)
+        {
+            return View(id);
+        }
+        public IActionResult Index()
+        {
+            return View();
+        }
     }
 }

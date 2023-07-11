@@ -40,13 +40,20 @@ namespace Serdiuk.API.Controllers
             return Ok();
         }
         [HttpGet("by-page")]
-        public async Task<IActionResult> GetBookByPageAsync([FromQuery]int page)
+        public async Task<IActionResult> GetBookByPageAsync([FromQuery] int page)
         {
             var result = await _bookService.GetBooksByPageAsync(page);
             HandleResult(result);
 
             return Ok(result.Value);
         }
-       
+        [HttpGet("get-by-id/{id}")]
+        public async Task<IActionResult> GetBookByIdAsync(Guid id)
+        {
+            var result = await _bookService.GetBookByIdAsync(id);
+            HandleResult(result);
+
+            return Ok(result.Value);
+        }
     }
 }

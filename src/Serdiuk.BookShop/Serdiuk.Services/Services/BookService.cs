@@ -2,6 +2,7 @@
 using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Serdiuk.BookShop.Domain.IdentityModels;
 using Serdiuk.BookShop.Domain.Models;
 using Serdiuk.BookShop.Domain.Models.Requests.Books;
 using Serdiuk.BookShop.Domain.ViewModels;
@@ -53,6 +54,34 @@ namespace Serdiuk.Services.Services
             }
         }
 
+        public async Task<Result<int>> ChangeRatingBook(ApplicationUser user, Guid bookId)
+        {
+            var likedBook = await user.LikedBooks.FirstOrDefaultAsync(x => x.Id == bookId);
+            try
+            {
+                if (likedBook == null)
+                {
+                    var entity = await _context.Books.FirstOrDefaultAsync(x => x.Id == bookId);
+                    if (entity == null) return Result.Fail("Invalid book id");
+                    await user.LikedBooks.AddAsync(entity);
+                    entity.Rating++;
+                    await _context.SaveChangesAsync(CancellationToken.None);
+                    return Result.Ok(entity.Rating);
+                }
+                else
+                {
+                    user.LikedBooks.Remove(likedBook);
+                    likedBook.Rating--;
+                    await _context.SaveChangesAsync(CancellationToken.None);
+                    return Result.Ok(likedBook.Rating);
+                }
+            }
+            catch (Exception e)
+            {
+                return Result.Fail(e.Message);
+            }
+        }
+
         public async Task<Result> CreateBookAsync(CreateBookRequest request)
         {
             var authors = new List<Author>();
@@ -96,20 +125,34 @@ namespace Serdiuk.Services.Services
             }
         }
 
-        public Task<Result<BookViewModel>> GetBookByIdAsync(Guid id)
+        public async Task<Result<BookViewModel>> GetBookByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var entity = await _context.Books.Include(x => x.Authors).Include(x => x.Comments).Include(x => x.Images).Include(x => x.Cover).FirstOrDefaultAsync(x => x.Id == id);
+            if (entity == null) return Result.Fail("Book not found");
+            return Result.Ok(_mapper.Map<BookViewModel>(entity));
         }
 
-        public async Task<Result<List<BookViewModel>>> GetBooksByFilterAsync(GetBooksByFilterRequest request)
+        public async Task<Result<List<BookInfoViewModel>>> GetBooksByFilterAsync(GetBooksByFilterRequest request)
         {
             try
             {
-                var books = await _context.Books.Where(x=>x.Status == request.Status)
-                    .Skip(request.Page * 10)
-                    .Take(10).ToListAsync();
+                var query = _context.Books
+                .OrderBy(x => x.Status == request.Status)
+                .Where(x => x.Status == request.Status)
+                .Skip(request.Page * 10)
+                .Take(10);
 
-                return Result.Ok(_mapper.Map<List<BookViewModel>>(books));
+                if (!string.IsNullOrWhiteSpace(request.Name))
+                {
+                    query = query.Where(x => x.Name.ToLower().Contains(request.Name.ToLower()));
+                }
+
+                var books = await query
+                    .Include(x => x.Cover)
+                    .Include(x => x.Authors)
+                    .Include(x => x.Comments)
+                    .ToListAsync();
+                return Result.Ok(_mapper.Map<List<BookInfoViewModel>>(books));
             }
             catch (Exception e)
             {
@@ -117,18 +160,17 @@ namespace Serdiuk.Services.Services
             }
         }
 
-        public async Task<Result<List<BookViewModel>>> GetBooksByPageAsync(int page)
+        public async Task<Result<List<BookInfoViewModel>>> GetBooksByPageAsync(int page)
         {
             try
             {
                 var books = await _context.Books.Skip(page * 10).Take(10)
-                    .Include(x=>x.Authors)
-                    .Include(x=>x.Cover)
-                    .Include(x=>x.Images)
-                    .Include(x=>x.Comments)
+                    .Include(x => x.Authors)
+                    .Include(x => x.Cover)
+                    .Include(x => x.Comments)
                     .ToListAsync();
 
-                return Result.Ok(_mapper.Map<List<BookViewModel>>(books));
+                return Result.Ok(_mapper.Map<List<BookInfoViewModel>>(books));
             }
             catch (Exception e)
             {

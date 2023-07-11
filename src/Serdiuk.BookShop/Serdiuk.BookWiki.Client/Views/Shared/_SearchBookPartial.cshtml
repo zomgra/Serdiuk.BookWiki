@@ -1,0 +1,18 @@
+﻿<form id="searchBookForm"  class="row">
+    <div class="col d-flex justify-content-center">
+        <input id="searchBookName" class="form-control m-3" name="name" type="text"/>
+    </div>
+
+    <div class="col d-flex justify-content-center  my-3">
+        <select name="status" id="status" class="form-control">
+            @foreach (var item in ViewBag.Status)
+            {
+                <option value="@item.Value">@item.Text</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-3 d-flex justify-content-center">
+        <button type="submit" class="btn btn-warning m-3">Search</button>
+    </div>
+</form>

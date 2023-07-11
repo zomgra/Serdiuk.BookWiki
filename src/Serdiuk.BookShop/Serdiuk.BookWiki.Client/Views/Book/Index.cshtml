@@ -1,0 +1,91 @@
+﻿@inject IConfiguration _config
+
+<partial name="_SearchBookPartial"></partial>
+
+<div id="booksContainer" class="row">
+</div>
+
+@section Scripts {
+    <script>
+        @{
+            string Url = _config.GetSection("API:Book").Value + "/by-filter";
+        }
+            $(document).ready(async function () {
+                await fetchBooks(0, '', 0)
+                $('#searchBookForm').on('submit', function(event){
+                    event.preventDefault();
+                    fetchBooks(0, event.target.name.value, 0)
+                })
+            })
+
+        async function fetchBooks(page, name, status) {
+            $.ajax({
+                url: `@Url?page=${page}&status=${status}&name=${name}`,
+                method: 'GET',
+                success: function (data) {
+                    $('#booksContainer').empty();
+                    data.forEach(book => includeBooks(book))
+                },
+            })
+        }
+        function includeBooks(book) {
+            let container = $('#booksContainer');
+
+            let bookDiv = $('<div>').addClass('row border my-4 rounded border-secondary ');
+
+            let figure = $('<figure>').addClass('figure border p-1');
+            let cover = $('<img>')
+                .addClass('img-fluid mx-auto d-block')
+                .prop('src', 'data:image/png;base64,' + book.cover)
+                .appendTo(figure);
+
+            let authors = ViewHelper.NoramlizeAuthorArray(book.authors);
+
+            authors.map(author => {
+                let figureCaption = $('<a>')
+                    .text(author.fullName)
+                    .addClass(' mx-1')
+                    .prop('href', `/author/${author.id}`)
+                    .appendTo(figure);
+            })
+
+            let coverDiv = $('<div>').addClass('col-4 m-2').append(figure);
+            bookDiv.append(coverDiv);
+
+            let name = $('<h4>').addClass('col').text(book.name);
+            let nameDiv = $('<div>').addClass('col-12 row').append(name);
+            let rating = $('<p>').addClass('h6 col-6').text(`Book likes: ${book.rating}`)
+
+            if (TokenClass.canUseToken()) {
+                let like = $('<i>').addClass('bi bi-heart col-1').appendTo(nameDiv);
+                let ratingValue = book.rating;
+
+                like.click(function () {
+                    like.toggleClass('bi-heart bi-heart-fill');
+
+                    if (like.hasClass('bi-heart-fill')) {
+                        ratingValue++;
+                    } else {
+                        ratingValue--;
+                    }
+
+                    rating.text('Book likes: ' + ratingValue);
+                });
+            }
+
+            let desc = $('<p>').addClass('h6 col-10 lead').text(book.description);
+            let descDiv = $('<div>').addClass('col').append(desc);
+
+            let textDiv = $('<div>').addClass('col parent-div d-flex flex-column').append(nameDiv, descDiv);
+            bookDiv.append(textDiv);
+
+            let manageButton = $('<a>').addClass('btn btn-info col-6').text('View more information')
+                .prop('href', `/book/get/${book.id}`)
+
+            let bottomPanel = $('<div>').addClass('child-div my-4 row')
+                .append(manageButton, rating).appendTo(textDiv);
+
+            container.append(bookDiv);
+        }
+    </script>
+}

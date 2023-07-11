@@ -1,0 +1,67 @@
+﻿@inject IConfiguration _config;
+
+
+@{
+    Layout = "_AdminLayout";
+    string message = string.Empty;
+}
+<div id="adminPanel" style="display:none">
+    <partial name="_SearchBookPartial"></partial>
+    
+    <div id="booksContainer" class="row">
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        @{
+            string Url = _config.GetSection("API:Book").Value + "/by-filter";
+        }
+        $(document).ready(async function () {
+            await fetchBooks();
+            $('#searchBookForm').on('submit', function (event) {
+                event.preventDefault();
+                fetchBooks()
+            })
+        })
+        async function fetchBooks() {
+
+            let page = $('input[name="page"]').val() ??= 0;
+            let status = $('#status').val() ??= 0;
+            let name = $('#searchBookName').val() ??= '';
+
+            console.log({page, status, name})
+
+            $.ajax({
+                url: `@Url?page=${page}&status=${status}&name=${name}`,
+                method: 'GET',
+                success: function (data) {
+                    $('#booksContainer').empty();
+                    data.forEach(book => includeBooks(book))
+                },
+            })
+        }
+        function includeBooks(book) {
+            let container = $('#booksContainer');
+
+            let bookDiv = $('<div>').addClass('row border m-4 col-4 border-secondary ');
+
+            let coverDiv = $('<div>').addClass('col-5 p-1');
+            let cover = $('<img>')
+                .addClass('img-fluid mx-auto d-block p-1')
+                .prop('src', 'data:image/png;base64,' + book.cover)
+                .appendTo(coverDiv);
+
+                bookDiv.append(coverDiv)
+
+            let actionDiv = $('<div>').addClass('col-7')
+            let uploadButton = $('<a>').addClass('btn btn-info m-4').click(function(){
+                window.location.href = `/admin/book/UploadImage/${book.id}`
+            }).text('Upload Image').appendTo(actionDiv)
+
+            bookDiv.append(actionDiv);
+
+            container.append(bookDiv);
+        }
+    </script>
+ }
