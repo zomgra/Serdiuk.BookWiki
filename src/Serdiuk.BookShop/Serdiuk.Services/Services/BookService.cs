@@ -178,6 +178,26 @@ namespace Serdiuk.Services.Services
             }
         }
 
+        public async Task<Result> RemovePhotoToBookAsync(Guid photoId, Guid id)
+        {
+            var book = await _context.Books.Include(x=>x.Images).FirstOrDefaultAsync(x => x.Id == id);
+            if (book == null) return Result.Fail("Invalid book id");
+            var image = book.Images.FirstOrDefault(x => x.Id == photoId);
+            if (image == null) return Result.Fail("Invalid image id");
+            try
+            {
+                book.Images.Remove(image);
+                _context.Images.Remove(image);
+                await _context.SaveChangesAsync(CancellationToken.None);
+
+                return Result.Ok();
+            }
+            catch(Exception ex)
+            {
+                return Result.Fail(ex.Message);
+            }
+        }
+
         public Task<Result> UpdateBookAsync(UpdateBookRequest request)
         {
             throw new NotImplementedException();

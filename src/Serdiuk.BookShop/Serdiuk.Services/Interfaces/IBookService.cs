@@ -12,6 +12,7 @@ namespace Serdiuk.Services.Interfaces
         Task<Result<List<BookInfoViewModel>>> GetBooksByFilterAsync(GetBooksByFilterRequest request);
         Task<Result<List<BookInfoViewModel>>> GetBooksByPageAsync(int page);
         Task<Result> UploadBookCoverAsync(IFormFile photo, Guid id);
+        Task<Result> RemovePhotoToBookAsync(Guid photoId, Guid id);
         Task<Result> AddPhotoToBookAsync(IFormFile photo, Guid id);
         Task<Result> CreateBookAsync(CreateBookRequest request);
         Task<Result> UpdateBookAsync(UpdateBookRequest request);

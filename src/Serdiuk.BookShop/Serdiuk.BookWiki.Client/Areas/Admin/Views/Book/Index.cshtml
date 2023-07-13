@@ -25,10 +25,13 @@
             })
         })
         async function fetchBooks() {
-
-            let page = $('input[name="page"]').val() ??= 0;
-            let status = $('#status').val() ??= 0;
-            let name = $('#searchBookName').val() ??= '';
+            console.log($('#searchBookPage').val());
+            let page = $('#searchBookPage').val();
+            page ??= 0;
+            let status = $('#status').val() ;
+            status ??= 0;
+            let name = $('#searchBookName').val() ;
+            name ??= '';
 
             console.log({page, status, name})
 
@@ -56,7 +59,7 @@
 
             let actionDiv = $('<div>').addClass('col-7')
             let uploadButton = $('<a>').addClass('btn btn-info m-4').click(function(){
-                window.location.href = `/admin/book/UploadImage/${book.id}`
+                window.location.href = `/admin/book/ImagesManage/${book.id}`
             }).text('Upload Image').appendTo(actionDiv)
 
             bookDiv.append(actionDiv);

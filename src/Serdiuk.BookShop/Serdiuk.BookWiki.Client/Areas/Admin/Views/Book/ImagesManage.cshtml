@@ -1,0 +1,109 @@
+﻿@using Serdiuk.BookShop.Domain.Models
+@model Guid
+@inject IConfiguration _config;
+
+@{
+    Layout = "_AdminLayout";
+}
+
+<div id="resultDiv" class="alert-success alert" style="display:none">
+    <h3>Success upload image</h3>
+</div>
+<div id="adminPanel" style="display:none">
+
+    <div id="imageContainer" class="row">
+    </div>
+
+    <form onsubmit="sendImage(event)">
+        <input type="file" id="fileInput" name="fileInput" class="form-control" />
+        <button type="submit" class="btn btn-success">Upload file</button>
+    </form>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            loadBook();
+        })
+        function sendImage(event) {
+            event.preventDefault();
+
+        @{
+            string UploadUrl = _config.GetSection("API:Book").Value + "/upload-image/";
+        }
+
+                let file = $('#fileInput').prop('files')[0];
+
+            let formData = new FormData();
+            formData.append('file', file);
+            formData.append('id', '@Model');
+
+            $.ajax({
+                url: '@UploadUrl',
+                contentType: false,
+                processData: false,
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('access'),
+                },
+                data: formData,
+                method: "POST",
+
+            })
+        }
+        function loadBook() {
+
+
+        @{
+            string Url = _config.GetSection("API:Book").Value + "/get-by-id/" + Model;
+        }
+
+                $.ajax({
+                    url: '@Url',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('access'),
+                    },
+                    method: "GET",
+                    success: function (data) {
+                        includeImage(data);
+                    }
+                });
+            function includeImage(book) {
+                let container = $('#imageContainer');
+                book.images.forEach(image => {
+                    let imageDiv = $('<div>').addClass('col-3 position-relative').prop('id', `${image.id}`)
+                    let img = $('<img>').addClass('img-fluid rounded mx-1')
+                        .prop('src', 'data:image/png;base64,' + image.data)
+                        .appendTo(imageDiv);
+                    container.append(imageDiv);
+
+                    let closeIcon = $('<i>').addClass('bi bi-x position-absolute top-0 end-0 m-2')
+                        .css('cursor', 'pointer')
+                        .click(function () {
+                            deleteImage(image.id, book.id)
+                        })
+                        .appendTo(imageDiv);
+
+                    container.append(imageDiv);
+                });
+            }
+            function deleteImage(imageId, bookId) {
+        @{
+            string RemoveImageUrl = _config.GetSection("API:Book").Value + "/delete-image";
+        }
+                    console.log(JSON.stringify({ imageId: imageId, bookId: bookId }));
+                $.ajax({
+                    url: '@RemoveImageUrl',
+                    contentType:"application/json",
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('access'),
+                    },
+                    method: "DELETE",
+                    success: function (data) {
+                        $(`#${imageId}`).remove();
+                    },
+                    data: JSON.stringify({ imageId: imageId, bookId: bookId })
+                })
+            }
+        }
+    </script>
+}

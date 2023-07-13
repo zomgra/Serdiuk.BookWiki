@@ -69,7 +69,7 @@
             }
         }
         async function isAdmin() {
-            let canUseAdmin = TokenClass.adminCheck();
+            let canUseAdmin = await TokenClass.adminCheck();
             if (canUseAdmin) {
                 $('#adminDiv').show();
             }

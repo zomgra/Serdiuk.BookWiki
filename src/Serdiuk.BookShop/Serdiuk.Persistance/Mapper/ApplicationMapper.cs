@@ -10,7 +10,7 @@ namespace Serdiuk.Persistance.Mapper
         {
             CreateMap<Book, BookViewModel>()
             .ForMember(dest => dest.Cover, opt => opt.MapFrom(src => src.Cover.Data))
-            .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images.Select(x => x.Data)))
+            .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
             .ForMember(dest => dest.Authors, opt => opt.MapFrom(src => src.Authors))
             .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments));
 

@@ -1,8 +1,10 @@
 ﻿class TokenClass {
 
-    static adminCheck() {
+    static async adminCheck() {
+        let canUse = await this.canUseToken()
+        if (!canUse) return false;
+
         const token = localStorage.getItem('access');
-        if (!token) return false;
 
         const decodedToken = JSON.parse(atob(token.split('.')[1]));
         const roles = decodedToken.role;
@@ -27,7 +29,7 @@
         const currentTime = new Date().getTime() / 1000;
 
         if (currentTime >= expirationTime) {
-            return TokenClass.tryRefreshToken(); // Используйте имя класса для вызова статического метода
+            return TokenClass.tryRefreshToken(); 
         }
         else {
             return true;
@@ -63,10 +65,12 @@
                 localStorage.removeItem('refresh');
             }
             else {
-                TokenClass.updateTokens(result.access, result.refresh); // Используйте имя класса для вызова статического метода
+                TokenClass.updateTokens(result.access, result.refresh);
             }
             return result.result;
         } catch (error) {
+            localStorage.removeItem('access');
+            localStorage.removeItem('refresh');
             console.error('An error occurred:', error);
             return false;
         }

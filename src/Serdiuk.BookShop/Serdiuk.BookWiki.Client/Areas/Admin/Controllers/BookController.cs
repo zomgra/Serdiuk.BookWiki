@@ -23,12 +23,25 @@ namespace Serdiuk.BookWiki.Client.Areas.Admin.Controllers
             ViewBag.Status = items;
             return View();
         }
-        public IActionResult UploadImage(Guid id)
+        public IActionResult ImagesManage(Guid id)
         {
             return View(id);
         }
         public IActionResult Index()
         {
+            var enumValues = Enum.GetValues(typeof(BookStatus));
+
+            var items = enumValues
+                .Cast<BookStatus>()
+                .Select(e => new SelectListItem
+                {
+                    Value = ((int)e).ToString(),
+                    Text = e.ToString()
+                })
+                .ToList();
+
+            ViewBag.Status = items;
+            return View();
             return View();
         }
     }
