@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Serdiuk.BookShop.Domain.Configurations;
 using Serdiuk.BookShop.Domain.IdentityModels;
 using Serdiuk.BookShop.Domain.Models;
-using System.Reflection;
 
 namespace Serdiuk.Persistance.Data
 {

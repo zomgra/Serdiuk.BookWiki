@@ -12,5 +12,6 @@ namespace Serdiuk.BookShop.Domain.ViewModels
         public BookStatus Status { get; set; }
         public List<AuthorViewModel> Authors { get; set; }
         public int CommentsCount { get; set; }
+        public bool YouLikeIt { get; set; }
     }
 }

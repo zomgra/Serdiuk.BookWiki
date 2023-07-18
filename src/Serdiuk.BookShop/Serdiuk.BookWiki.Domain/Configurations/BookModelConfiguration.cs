@@ -16,6 +16,8 @@ namespace Serdiuk.BookShop.Domain.Configurations
             builder.HasOne(x => x.Cover);
             builder.HasMany(x => x.Comments)
                 .WithOne(x => x.Book);
+
+            builder.HasMany(x => x.LikedUsers).WithMany(x => x.LikedBooks);
         }
     }
 }

@@ -15,13 +15,11 @@ namespace Serdiuk.Services.Services
     {
         private readonly IAppDbContext _context;
         private readonly IMapper _mapper;
-        private readonly IAuthorService _authorService;
 
-        public BookService(IAppDbContext context, IMapper mapper, IAuthorService service)
+        public BookService(IAppDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
-            _authorService = service;
         }
 
         public async Task<Result> AddPhotoToBookAsync(IFormFile photo, Guid id)
@@ -54,25 +52,25 @@ namespace Serdiuk.Services.Services
             }
         }
 
-        public async Task<Result<int>> ChangeRatingBook(ApplicationUser user, Guid bookId)
+        public async Task<Result<int?>> ChangeRatingBook(ApplicationUser user, Guid bookId)
         {
-            var likedBook = await user.LikedBooks.FirstOrDefaultAsync(x => x.Id == bookId);
+            var likedBook = user.LikedBooks.FirstOrDefault(x => x.Id == bookId);
             try
             {
                 if (likedBook == null)
                 {
                     var entity = await _context.Books.FirstOrDefaultAsync(x => x.Id == bookId);
                     if (entity == null) return Result.Fail("Invalid book id");
-                    await user.LikedBooks.AddAsync(entity);
-                    entity.Rating++;
-                    await _context.SaveChangesAsync(CancellationToken.None);
+                    _context.Users.Attach(user);
+                    user.LikedBooks.Add(entity);
+                    var count = await _context.SaveChangesAsync(CancellationToken.None);
                     return Result.Ok(entity.Rating);
                 }
                 else
                 {
+                    _context.Users.Attach(user);
                     user.LikedBooks.Remove(likedBook);
-                    likedBook.Rating--;
-                    await _context.SaveChangesAsync(CancellationToken.None);
+                    var count = await _context.SaveChangesAsync(CancellationToken.None);
                     return Result.Ok(likedBook.Rating);
                 }
             }
@@ -95,6 +93,7 @@ namespace Serdiuk.Services.Services
                 Status = request.Status,
                 Id = Guid.NewGuid(),
                 Cover = new(),
+                LikedUsers = new List<ApplicationUser>()
             };
             book.Authors = new List<Author>();
             foreach (var item in authors)
@@ -132,7 +131,7 @@ namespace Serdiuk.Services.Services
             return Result.Ok(_mapper.Map<BookViewModel>(entity));
         }
 
-        public async Task<Result<List<BookInfoViewModel>>> GetBooksByFilterAsync(GetBooksByFilterRequest request)
+        public async Task<Result<List<BookInfoViewModel>>> GetBooksByFilterAsync(GetBooksByFilterRequest request, string userId)
         {
             try
             {
@@ -151,8 +150,25 @@ namespace Serdiuk.Services.Services
                     .Include(x => x.Cover)
                     .Include(x => x.Authors)
                     .Include(x => x.Comments)
+                    .Include(x => x.LikedUsers)
                     .ToListAsync();
-                return Result.Ok(_mapper.Map<List<BookInfoViewModel>>(books));
+
+                var mappedBooks = new List<BookInfoViewModel>();
+
+                foreach (var book in books)
+                {
+                    var userLikeBook = book.LikedUsers.Select(x => x.Id).Contains(userId);
+                    var mapBook = _mapper.Map<BookInfoViewModel>(book, opts =>
+                    {
+                        opts.AfterMap((src, dest) =>
+                        {
+                            dest.YouLikeIt = userLikeBook;
+                        });
+                    });
+                    mappedBooks.Add(mapBook);
+                }
+
+                return Result.Ok(mappedBooks);
             }
             catch (Exception e)
             {
@@ -160,23 +176,6 @@ namespace Serdiuk.Services.Services
             }
         }
 
-        public async Task<Result<List<BookInfoViewModel>>> GetBooksByPageAsync(int page)
-        {
-            try
-            {
-                var books = await _context.Books.Skip(page * 10).Take(10)
-                    .Include(x => x.Authors)
-                    .Include(x => x.Cover)
-                    .Include(x => x.Comments)
-                    .ToListAsync();
-
-                return Result.Ok(_mapper.Map<List<BookInfoViewModel>>(books));
-            }
-            catch (Exception e)
-            {
-                return Result.Fail(e.Message);
-            }
-        }
 
         public async Task<Result> RemovePhotoToBookAsync(Guid photoId, Guid id)
         {

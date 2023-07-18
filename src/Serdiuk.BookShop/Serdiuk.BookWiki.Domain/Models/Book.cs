@@ -1,4 +1,6 @@
-﻿namespace Serdiuk.BookShop.Domain.Models
+﻿using Serdiuk.BookShop.Domain.IdentityModels;
+
+namespace Serdiuk.BookShop.Domain.Models
 {
     public class Book
     {
@@ -9,7 +11,13 @@
         public List<Image>? Images { get; set; } = new();
         public BookStatus Status { get; set; }
         public ICollection<Author>? Authors { get; set; }
-        public int Rating { get; set; }
+        public int? Rating { get
+            {
+                return LikedUsers.Count();
+            } 
+        } 
         public List<Comment>? Comments { get; set; } = new();
+        public ICollection<ApplicationUser> LikedUsers { get; set; } = new List<ApplicationUser>();
+
     }
 }

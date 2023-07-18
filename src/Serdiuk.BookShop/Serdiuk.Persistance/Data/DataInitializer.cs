@@ -20,6 +20,7 @@ namespace Serdiuk.Persistance.Data
 
             if (!isExists) return; // TODO : Throw db exception
 
+             context.Database.EnsureCreated();
             await context.Database.MigrateAsync();
 
             var userManager = provider.GetService<UserManager<ApplicationUser>>();

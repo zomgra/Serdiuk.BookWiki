@@ -8,15 +8,10 @@ namespace Serdiuk.Persistance.Mapper
     {
         public ApplicationMapper()
         {
-            CreateMap<Book, BookViewModel>()
-            .ForMember(dest => dest.Cover, opt => opt.MapFrom(src => src.Cover.Data))
-            .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images))
-            .ForMember(dest => dest.Authors, opt => opt.MapFrom(src => src.Authors))
-            .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments));
-
             CreateMap<Book, BookInfoViewModel>()
             .ForMember(dest => dest.Cover, opt => opt.MapFrom(src => src.Cover.Data))
             .ForMember(dest => dest.Authors, opt => opt.MapFrom(src => src.Authors))
+            .ForMember(dest => dest.YouLikeIt, opt => opt.Ignore())
             .ForMember(dest => dest.CommentsCount, opt => opt.MapFrom(src => src.Comments.Count()));
 
             CreateMap<Author, AuthorViewModel>()

@@ -17,6 +17,21 @@ namespace Serdiuk.API.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.19");
 
+            modelBuilder.Entity("ApplicationUserBook", b =>
+                {
+                    b.Property<Guid>("LikedBooksId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LikedUsersId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("LikedBooksId", "LikedUsersId");
+
+                    b.HasIndex("LikedUsersId");
+
+                    b.ToTable("ApplicationUserBook");
+                });
+
             modelBuilder.Entity("AuthorBook", b =>
                 {
                     b.Property<Guid>("AuthorsId")
@@ -274,9 +289,6 @@ namespace Serdiuk.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("TEXT");
-
                     b.Property<Guid?>("CoverId")
                         .HasColumnType("TEXT");
 
@@ -288,15 +300,10 @@ namespace Serdiuk.API.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("Rating")
-                        .HasColumnType("REAL");
-
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("CoverId");
 
@@ -350,6 +357,21 @@ namespace Serdiuk.API.Migrations
                     b.HasIndex("BookId");
 
                     b.ToTable("Images");
+                });
+
+            modelBuilder.Entity("ApplicationUserBook", b =>
+                {
+                    b.HasOne("Serdiuk.BookShop.Domain.Models.Book", null)
+                        .WithMany()
+                        .HasForeignKey("LikedBooksId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Serdiuk.BookShop.Domain.IdentityModels.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("LikedUsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("AuthorBook", b =>
@@ -420,10 +442,6 @@ namespace Serdiuk.API.Migrations
 
             modelBuilder.Entity("Serdiuk.BookShop.Domain.Models.Book", b =>
                 {
-                    b.HasOne("Serdiuk.BookShop.Domain.IdentityModels.ApplicationUser", null)
-                        .WithMany("LikedBooks")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("Serdiuk.BookShop.Domain.Models.Image", "Cover")
                         .WithMany()
                         .HasForeignKey("CoverId");
@@ -454,8 +472,6 @@ namespace Serdiuk.API.Migrations
             modelBuilder.Entity("Serdiuk.BookShop.Domain.IdentityModels.ApplicationUser", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("LikedBooks");
                 });
 
             modelBuilder.Entity("Serdiuk.BookShop.Domain.Models.Book", b =>
