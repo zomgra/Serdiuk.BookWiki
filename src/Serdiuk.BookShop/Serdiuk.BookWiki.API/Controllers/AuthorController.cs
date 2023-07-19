@@ -8,6 +8,7 @@ namespace Serdiuk.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+
     public class AuthorController : BaseApiController
     {
         private readonly IAuthorService _authorService;
@@ -26,6 +27,7 @@ namespace Serdiuk.API.Controllers
             return Ok();
         }
         [HttpGet("get-all")]
+        [ResponseCache(Duration = 60)]
         public async Task<IActionResult> GetAllAuthorsAsync()
         {
             var result = await _authorService.GetAllAuthorAsync();

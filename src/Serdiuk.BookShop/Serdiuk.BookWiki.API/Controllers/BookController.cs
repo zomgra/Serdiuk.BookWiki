@@ -26,6 +26,7 @@ namespace Serdiuk.API.Controllers
         }
         [HttpGet("by-filter")]
         [AllowAnonymous]
+        [ResponseCache(Duration = 60)]
         public async Task<IActionResult> GetBooksByFilterAsync([FromQuery]GetBooksByFilterRequest request)
         {
             var userId = _userManager.GetUserId(User);
@@ -70,6 +71,20 @@ namespace Serdiuk.API.Controllers
 
             return Ok();
         }
+        [HttpGet("get-user-like")]
+        [ResponseCache(Duration = 30)]
+        public async Task<IActionResult> GetUserLikeBookAsync()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var user = await _userManager.Users.Include(x => x.LikedBooks).ThenInclude(x=>x.Cover).FirstOrDefaultAsync(x=>x.Id == userId);
+
+            if(user == null) return NotFound();
+
+            var result = await _bookService.GetUserLikeBookAsync(user);
+            HandleResult(result);
+
+            return Ok(result.Value);
+        }
         [HttpPost("create")]
         public async Task<IActionResult> CreateBookAsync([FromForm] CreateBookRequest request)
         {
@@ -79,6 +94,7 @@ namespace Serdiuk.API.Controllers
         }
         [HttpGet("get-by-id/{id}")]
         [AllowAnonymous]
+        [ResponseCache(Duration = 60)]
         public async Task<IActionResult> GetBookByIdAsync(Guid id)
         {
             var result = await _bookService.GetBookByIdAsync(id);

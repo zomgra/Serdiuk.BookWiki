@@ -7,6 +7,6 @@ namespace Serdiuk.BookShop.Domain.IdentityModels
     public class ApplicationUser : IdentityUser
     {
         public List<Comment> Comments { get; set; } = new();
-        public ICollection<Book> LikedBooks { get; set; } = new List<Book>();
+        public virtual ICollection<Book> LikedBooks { get; set; } = new List<Book>();
     }
 }

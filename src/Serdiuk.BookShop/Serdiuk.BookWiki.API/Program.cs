@@ -30,6 +30,8 @@ builder.Services.AddCors(x =>
     });
 });
 
+builder.Services.AddResponseCaching();
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(c =>
 {
     c.SignIn.RequireConfirmedPhoneNumber = false;
@@ -86,6 +88,8 @@ app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseResponseCaching();
 
 app.MapControllers();
 await DataInitializer.Intialize(app.Services.CreateScope().ServiceProvider);

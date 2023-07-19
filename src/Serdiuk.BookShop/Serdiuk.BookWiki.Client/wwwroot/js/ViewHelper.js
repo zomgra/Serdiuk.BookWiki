@@ -47,20 +47,20 @@ class ViewHelper {
         let name = $('<h4>').addClass('col').text(book.name);
         let nameDiv = $('<div>').addClass('col-12 row').append(name);
         let rating = $('<p>').addClass('h6 col-6').text(`Book likes: ${book.rating}`)
-        console.log(book);
-        if (TokenClass.canUseToken()) {
+        if (likeUrl)
+            if (TokenClass.canUseToken()) {
 
 
-            let like = $('<i>').addClass(`bi ${book.youLikeIt ? 'bi-heart-fill' : 'bi-heart'} col-1`).appendTo(nameDiv);
+                let like = $('<i>').addClass(`bi ${book.youLikeIt ? 'bi-heart-fill' : 'bi-heart'} col-1`).appendTo(nameDiv);
 
-            like.click(function () {
-                like.toggleClass('bi-heart bi-heart-fill');
+                like.click(function () {
+                    like.toggleClass('bi-heart bi-heart-fill');
 
-                BookService.likeToBook(book, likeUrl).then(x => x).then(newLikes => { rating.text('Book likes: ' + newLikes); });
+                    BookService.likeToBook(book, likeUrl).then(x => x).then(newLikes => { rating.text('Book likes: ' + newLikes); });
 
-               
-            });
-        }
+
+                });
+            }
 
         let desc = $('<p>').addClass('h6 col-10 lead').text(book.description);
         let descDiv = $('<div>').addClass('col').append(desc);

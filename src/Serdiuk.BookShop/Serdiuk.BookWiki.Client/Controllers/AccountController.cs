@@ -15,5 +15,9 @@ namespace Serdiuk.BookWiki.Client.Controllers
             var request = new RegisterRequestDto();
             return View(request);
         }
+        public IActionResult Profile()
+        {
+            return View();
+        }
     }
 }

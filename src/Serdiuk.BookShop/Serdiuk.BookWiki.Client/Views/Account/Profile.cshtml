@@ -1,0 +1,39 @@
+﻿@inject IConfiguration _config;
+
+<div class="row unauthorizeDiv">
+    You are not authorize, please, register or login in account
+    <div class="col-3">
+        <a class="btn btn-outline-info">Registration</a>
+    </div>
+    <div class="col-3">
+        <a class="btn btn-outline-warning">Login</a>
+    </div>
+</div>
+
+<div id="profileDiv" style="display: none">
+    <div id="bookContainer">
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(async function () {
+        @{
+            string Url = _config.GetSection("API:Book").Value + "/get-user-like";
+        }
+                isAuth = await TokenClass.canUseToken()
+            if (isAuth) {
+                $("#profileDiv").show();
+                fetchBook();
+            }
+        });
+        function fetchBook() {
+            let container = $("#bookContainer")
+            BookService.fetchLikedBook('@Url').then(data => {
+                data.forEach(book => {
+                    container.empty();
+                    data.forEach(book => ViewHelper.includeBooks(book, container))
+                })
+            })}
+    </script>
+}

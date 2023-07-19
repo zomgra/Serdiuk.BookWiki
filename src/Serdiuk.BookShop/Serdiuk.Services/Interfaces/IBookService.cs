@@ -16,5 +16,6 @@ namespace Serdiuk.Services.Interfaces
         Task<Result> CreateBookAsync(CreateBookRequest request);
         Task<Result> UpdateBookAsync(UpdateBookRequest request);
         Task<Result<int?>> ChangeRatingBook(ApplicationUser user, Guid bookId);
+        Task<Result<List<BookInfoViewModel>>> GetUserLikeBookAsync(ApplicationUser user);
     }
 }

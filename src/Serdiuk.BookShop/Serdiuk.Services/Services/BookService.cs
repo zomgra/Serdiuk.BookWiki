@@ -92,7 +92,6 @@ namespace Serdiuk.Services.Services
                 Description = request.Description,
                 Status = request.Status,
                 Id = Guid.NewGuid(),
-                Cover = new(),
                 LikedUsers = new List<ApplicationUser>()
             };
             book.Authors = new List<Author>();
@@ -176,10 +175,24 @@ namespace Serdiuk.Services.Services
             }
         }
 
+        public async Task<Result<List<BookInfoViewModel>>> GetUserLikeBookAsync(ApplicationUser user)
+        {
+            try
+            {
+                var books = user.LikedBooks;
+                var mappedBook = _mapper.Map<List<BookInfoViewModel>>(books);
+                return await Task.FromResult(Result.Ok(mappedBook));
+            }
+            catch (Exception e)
+            {
+                return Result.Fail(e.Message);
+            }
+
+        }
 
         public async Task<Result> RemovePhotoToBookAsync(Guid photoId, Guid id)
         {
-            var book = await _context.Books.Include(x=>x.Images).FirstOrDefaultAsync(x => x.Id == id);
+            var book = await _context.Books.Include(x => x.Images).FirstOrDefaultAsync(x => x.Id == id);
             if (book == null) return Result.Fail("Invalid book id");
             var image = book.Images.FirstOrDefault(x => x.Id == photoId);
             if (image == null) return Result.Fail("Invalid image id");
@@ -191,7 +204,7 @@ namespace Serdiuk.Services.Services
 
                 return Result.Ok();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Result.Fail(ex.Message);
             }
@@ -223,7 +236,6 @@ namespace Serdiuk.Services.Services
                         Data = ms.ToArray(),
                     };
                     entity.Cover = newPhoto;
-                    await _context.Images.AddAsync(newPhoto);
                     await _context.SaveChangesAsync(CancellationToken.None);
                     return Result.Ok();
                 }

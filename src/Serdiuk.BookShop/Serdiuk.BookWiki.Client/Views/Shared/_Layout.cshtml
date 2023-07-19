@@ -60,11 +60,12 @@
         });
 
         async function isAuthorize() {
-            isAuth = await TokenClass.canUseToken()
+            let isAuth = await TokenClass.canUseToken()
 
             if (isAuth) {
                 $("#isAuthDiv").show();
                 $('#loginDiv').hide();
+                $('.unauthorizeDiv').hide();
             }
         }
         async function isAdmin() {
