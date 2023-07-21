@@ -319,6 +319,9 @@ namespace Serdiuk.API.Migrations
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("ApplicationUserId1")
+                        .HasColumnType("TEXT");
+
                     b.Property<Guid?>("BookId")
                         .HasColumnType("TEXT");
 
@@ -335,6 +338,8 @@ namespace Serdiuk.API.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
+                    b.HasIndex("ApplicationUserId1");
+
                     b.HasIndex("BookId");
 
                     b.ToTable("Comments");
@@ -350,6 +355,7 @@ namespace Serdiuk.API.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<byte[]>("Data")
+                        .IsRequired()
                         .HasColumnType("BLOB");
 
                     b.HasKey("Id");
@@ -455,6 +461,10 @@ namespace Serdiuk.API.Migrations
                         .WithMany("Comments")
                         .HasForeignKey("ApplicationUserId");
 
+                    b.HasOne("Serdiuk.BookShop.Domain.IdentityModels.ApplicationUser", null)
+                        .WithMany("LikedComments")
+                        .HasForeignKey("ApplicationUserId1");
+
                     b.HasOne("Serdiuk.BookShop.Domain.Models.Book", "Book")
                         .WithMany("Comments")
                         .HasForeignKey("BookId");
@@ -472,6 +482,8 @@ namespace Serdiuk.API.Migrations
             modelBuilder.Entity("Serdiuk.BookShop.Domain.IdentityModels.ApplicationUser", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("LikedComments");
                 });
 
             modelBuilder.Entity("Serdiuk.BookShop.Domain.Models.Book", b =>

@@ -1,4 +1,6 @@
-﻿namespace Serdiuk.BookShop.Domain.Models
+﻿using Serdiuk.BookShop.Domain.IdentityModels;
+
+namespace Serdiuk.BookShop.Domain.Models
 {
     public class Comment
     {

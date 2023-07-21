@@ -148,7 +148,6 @@ namespace Serdiuk.Services.Services
                 var books = await query
                     .Include(x => x.Cover)
                     .Include(x => x.Authors)
-                    .Include(x => x.Comments)
                     .Include(x => x.LikedUsers)
                     .ToListAsync();
 

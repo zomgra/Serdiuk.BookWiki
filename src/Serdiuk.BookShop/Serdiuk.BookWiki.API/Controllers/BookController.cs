@@ -7,7 +7,6 @@ using Serdiuk.API.Controllers.Base;
 using Serdiuk.BookShop.Domain.IdentityModels;
 using Serdiuk.BookShop.Domain.Models.Requests.Books;
 using Serdiuk.Services.Interfaces;
-using System.Security.Claims;
 
 namespace Serdiuk.API.Controllers
 {
@@ -29,8 +28,7 @@ namespace Serdiuk.API.Controllers
         [ResponseCache(Duration = 60)]
         public async Task<IActionResult> GetBooksByFilterAsync([FromQuery]GetBooksByFilterRequest request)
         {
-            var userId = _userManager.GetUserId(User);
-            var books = await _bookService.GetBooksByFilterAsync(request, userId);
+            var books = await _bookService.GetBooksByFilterAsync(request, UserId);
             
             HandleResult(books);
             return Ok(books.Value);
@@ -54,8 +52,7 @@ namespace Serdiuk.API.Controllers
         [HttpPut("like")]
         public async Task<IActionResult> LikeBookAsync(Guid bookId)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var user = await _userManager.Users.Include(x=>x.LikedBooks).FirstOrDefaultAsync(x=>x.Id==userId);
+            var user = await _userManager.Users.Include(x=>x.LikedBooks).FirstOrDefaultAsync(x=>x.Id==UserId);
             if (user == null) return Unauthorized();
             var result = await _bookService.ChangeRatingBook(user, bookId);
 
@@ -75,8 +72,7 @@ namespace Serdiuk.API.Controllers
         [ResponseCache(Duration = 30)]
         public async Task<IActionResult> GetUserLikeBookAsync()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var user = await _userManager.Users.Include(x => x.LikedBooks).ThenInclude(x=>x.Cover).FirstOrDefaultAsync(x=>x.Id == userId);
+            var user = await _userManager.Users.Include(x => x.LikedBooks).ThenInclude(x=>x.Cover).FirstOrDefaultAsync(x=>x.Id == UserId);
 
             if(user == null) return NotFound();
 
