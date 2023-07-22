@@ -1,88 +1,100 @@
 ﻿@model Guid
 @inject IConfiguration _config
 
-<div id="bookContainer" class="row d-flex justify-content-center">
-    
+<div id="bookContainer" class="d-flex mb-5 justify-content-center">
 </div>
-<div id="commentsContainer">
-    <div class="authorizeDiv">
-        <textarea id="commentContent" placeholder="Content for comment">
+<div class="row">
+    <div id="commentsContainer" class="col">
+    </div>
+    <div class="authorizeDiv col-4">
+        <label for="commentContent">Comment content</label>
+        <textarea id="commentContent" class="form-control" placeholder="Content for comment">
 
         </textarea>
-        <a class="btn btn-outline-success" onclick="sendComment('@Model')">Create comment</a>
+        <a class="mt-1 btn btn-outline-success" onclick="sendComment('@Model')">Create comment</a>
     </div>
 </div>
 
-@section Scripts 
-{
+@section Scripts
+    {
     <script>
         @{
             string GetBookUrl = _config.GetSection("API:Book").Value + "/get-by-id";
+            string LikeCommetUrl = _config.GetSection("API:Comment").Value + "/like";
             string GetCommentUrl = _config.GetSection("API:Comment").Value + "/get-by-id";
             string CreateCommentUrl = _config.GetSection("API:Comment").Value + "/create";
         }
-        $(document).ready(function(){
-            getBook('@Model');
-            getComments('@Model')
-        })
-        function getBook(id){
+            $(document).ready(function () {
+                getBook('@Model');
+                getComments('@Model')
+            })
+        function getBook(id) {
             $.ajax({
-                url: '@GetBookUrl/'+id,
-                method:"GET",
-                success: function(data){
+                url: '@GetBookUrl/' + id,
+                method: "GET",
+                success: function (data) {
                     loadBookToDoc(data);
                 }
             })
         }
-        function getComments(id){
+        function getComments(id) {
             $.ajax({
-                url: '@GetCommentUrl'+"?bookId="+id,
-                method:"GET",
+                url: '@GetCommentUrl' + "?bookId=" + id,
+                method: "GET",
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('access'),
                 },
-                success: function(data){
+                success: function (data) {
                     loadComments(data)
                 }
             })
         }
 
-        function sendComment(id){
+        function sendComment(id) {
 
             let contentComment = $("#commentContent").val();
-            
+
             $.ajax({
                 url: '@CreateCommentUrl',
-                method:"POST",
+                method: "POST",
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem('access'),
                 },
-                contentType:"application/json",
-                data: JSON.stringify({bookId:id,content:contentComment}),
-                success:function(data){
+                contentType: "application/json",
+                data: JSON.stringify({ bookId: id, content: contentComment }),
+                success: function (data) {
                     console.log('Success create comment')
                 }
             })
         }
 
-        function loadComments(comments){
+        function loadComments(comments) {
             let container = $("#commentsContainer");
+
+            comments.forEach(comment => {
             
-            comments.forEach(comment=>{
-                var commentHtml = `
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">${comment.writerUsername}</h5>
-                            <p class="card-text">${comment.content}</p>
-                            <p class="card-text">Likes: ${comment.likes}</p>
-                        </div>
-                    </div>
-                `;
-                container.append(commentHtml);
+
+                let cardLikeButton = $(`<button class="btn btn-outline-warning">
+                        <i class="bi bi-suit-heart-fill">
+                            <span class= "badge bg-secondary"> ${comment.likes} </span>
+                        </i>
+                        </button>`)
+
+                var cardBody = $("<div class='card-body'></div>")
+                    .append(`<h5 class="card-title">${comment.writerUsername}</h5>`)
+                    .append(`<p class="card-text">${comment.content}</p>`)
+                    .append(cardLikeButton)
+
+                var card = $("<div class='card mb-3'></div>").append(cardBody);
+                let spanElement = card.find('span');
+                cardLikeButton.on("click", ()=>likeComment(comment.id, spanElement))
+
+
+                container.prepend(card);
             })
         }
 
-        function loadBookToDoc(book){
+        function loadBookToDoc(book) {
             let container = $('#bookContainer');
             let dataDiv = $('<div>').addClass('row border d-flex justify-content-center')
 
@@ -102,11 +114,11 @@
             let textDiv = $('<div>').addClass('col flex-column').append(nameDiv, descDiv);
             dataDiv.append(coverDiv, textDiv).appendTo(container)
 
-            let imagesDiv = $('<div>').addClass('row d-flex justify-content-center')
+            let imagesDiv = $('<div>').addClass('row d-flex my-3 col-12 justify-content-center')
             let imageCarousel = $('<div>').addClass('carousel slide').prop("style", "max-width:250px").prop('data-bs-ride', "carousel").prop('id', "carouselControls")
             let carouselInner = $('<div>').addClass('carousel-inner d-flex justify-content-start').appendTo(imageCarousel);
-            book.images.forEach((image, index)=>{
-                let img = $('<img>').addClass("img-fluid rounded").prop("style", "max-height:250px; max-width: 350px").prop('src', 'data:image/png;base64,' + image.data)
+            book.images.forEach((image, index) => {
+                let img = $('<img>').addClass("img-fluid rounded").prop("style", "max-height:350px; max-width: 350px").prop('src', 'data:image/png;base64,' + image.data)
                 let carouselItem = $('<div>').addClass(` ${index == 0 ? "carousel-item active" : "carousel-item"}`).appendTo(carouselInner).append(img);
             })
 
@@ -125,6 +137,20 @@
             imagesDiv.append(imageCarousel).appendTo(textDiv);
 
 
+        }
+        function likeComment(id, likeCount){
+            $.ajax({
+                url: '@LikeCommetUrl',
+                data: JSON.stringify({commentId:id}),
+                method: "PUT",
+                contentType:"application/json",
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('access'),
+                },
+                success: function (data) {
+                    likeCount.text(data);
+                }
+            })
         }
     </script>
 }

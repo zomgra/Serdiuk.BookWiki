@@ -62,7 +62,7 @@ namespace Serdiuk.Services.Services
             }
         }
 
-        public async Task<Result> LikeCommentAsync(LikeCommentRequest request, ApplicationUser user)
+        public async Task<Result<int>> LikeCommentAsync(LikeCommentRequest request, ApplicationUser user)
         {
             try
             {
@@ -72,9 +72,12 @@ namespace Serdiuk.Services.Services
                 if (user.LikedComments.Contains(comment))
                     return Result.Fail("You already like comment");
 
+                _context.Users.Attach(user);
+
                 comment.Likes++;
                 user.LikedComments.Add(comment);
-                return Result.Ok();
+                await _context.SaveChangesAsync(CancellationToken.None);
+                return Result.Ok(comment.Likes);
             }
             catch (Exception ex)
             {

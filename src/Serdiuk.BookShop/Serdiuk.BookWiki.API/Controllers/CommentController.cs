@@ -31,7 +31,7 @@ namespace Serdiuk.API.Controllers
 
             var result = await _commentService.LikeCommentAsync(request, user);
             HandleResult(result);
-            return Ok();
+            return Ok(result.Value);
         }
         [HttpPost("create")]
         public async Task<IActionResult> CraeteCommentAsync(CreateCommentRequest request)
