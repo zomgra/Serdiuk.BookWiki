@@ -46,9 +46,9 @@ namespace Serdiuk.Services.Services
                     return Result.Ok();
                 }
             }
-            catch
+            catch(Exception ex)
             {
-                return Result.Fail("Saving Failure");
+                return Result.Fail("Saving Failure: "+ex.Message);
             }
         }
 
@@ -102,10 +102,9 @@ namespace Serdiuk.Services.Services
             try
             {
                 _context.Books.Add(book);
-                await _context.SaveChangesAsync(CancellationToken.None);
 
+                var resultUploadFile = await UploadBookCoverAsync(request.File, book);
 
-                var resultUploadFile = await UploadBookCoverAsync(request.File, book.Id);
                 if (resultUploadFile.IsSuccess)
                 {
                     return Result.Ok();
@@ -136,7 +135,6 @@ namespace Serdiuk.Services.Services
             {
                 var query = _context.Books
                 .OrderBy(x => x.Status == request.Status)
-                .Where(x => x.Status == request.Status)
                 .Skip(request.Page * 10)
                 .Take(10);
 
@@ -235,6 +233,37 @@ namespace Serdiuk.Services.Services
                         Data = ms.ToArray(),
                     };
                     entity.Cover = newPhoto;
+                    await _context.SaveChangesAsync(CancellationToken.None);
+                    return Result.Ok();
+                }
+            }
+            catch
+            {
+                return Result.Fail("Saving Failure");
+            }
+        }
+
+        public async Task<Result> UploadBookCoverAsync(IFormFile photo, Book book)
+        {
+            string contentType = photo.ContentType.ToLower();
+
+            if (!contentType.StartsWith("image/"))
+            {
+                return Result.Fail("Its not a photo");
+            }
+            if (book == null) return Result.Fail("Book not found");
+            try
+            {
+                using (var ms = new MemoryStream())
+                {
+                    await photo.CopyToAsync(ms);
+                    var newPhoto = new Image
+                    {
+                        Id = book.Id,
+                        Data = ms.ToArray(),
+                    };
+                    await _context.Images.AddAsync(newPhoto);
+                    book.Cover = newPhoto;
                     await _context.SaveChangesAsync(CancellationToken.None);
                     return Result.Ok();
                 }

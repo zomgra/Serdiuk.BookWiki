@@ -1,0 +1,63 @@
+﻿@inject IConfiguration _config
+@model Guid
+
+<div id="authorContainer">
+    <h2>Author</h2>
+    <div>
+        <span id="author-name"></span> <span id="author-lastname"></span>
+    </div>
+    <div id="books-container" class="row">
+        <h3>Books</h3>
+    </div>
+    <div>
+        <span>Likes: </span><span id="likes-count"></span> <i id="heart-icon" class="fa fa-heart"></i>
+    </div>
+
+</div>
+
+@section Scripts{
+    @{
+        string Url = _config.GetSection("API:Author").Value + "/get-by-id?authorId=" + Model;
+    }
+    <script>
+
+        $(document).ready(async function () {
+            fetchAuthor('@Model');
+        })
+        function fetchAuthor(id) {
+            $.ajax({
+                url: '@Url',
+                method: 'GET',
+                success: function (data) {
+                    includeAuthor(data);
+                }
+            })
+        }
+        function includeAuthor(data) {
+            let container = $("#authorContainer");
+
+            $('#author-name').text(data.firstName);
+            $('#author-lastname').text(data.lastName);
+
+            var booksContainer = $('#books-container');
+            data.books.forEach(function (book) {
+                var bookElement = `
+                        <div class="book col-4">
+                            <img src="data:image/png;base64 ${book.cover}" alt="Book Cover" width="100">
+                            <div>
+                                <h4>${book.name}</h4>
+                                <p>${book.description}</p>
+                            </div>
+                        </div>
+                    `;
+                booksContainer.append(bookElement);
+            });
+
+            if (data.YouLikeIt) {
+                $('#heart-icon').addClass('fas'); // Добавляем класс "fas" для заполненного сердечка
+            } else {
+                $('#heart-icon').addClass('far'); // Добавляем класс "far" для пустого сердечка
+            }
+        }
+    </script>
+}

@@ -37,7 +37,7 @@ class ViewHelper {
             let figureCaption = $('<a>')
                 .text(author.fullName)
                 .addClass(' mx-1')
-                .prop('href', `/author/${author.id}`)
+                .prop('href', `/author/index/${author.id}`)
                 .appendTo(figure);
         })
 

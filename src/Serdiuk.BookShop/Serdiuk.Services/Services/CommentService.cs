@@ -29,7 +29,6 @@ namespace Serdiuk.Services.Services
                 var comment = new Comment
                 {
                     Content = request.Content,
-                    Likes = 0,
                     WriterUsername = user.UserName,
                 };
                 book.Comments.Add(comment);
@@ -69,13 +68,17 @@ namespace Serdiuk.Services.Services
                 var comment = await _context.Comments.FirstOrDefaultAsync(x => x.Id == request.CommentId);
                 if (comment == null) return Result.Fail("Invalid credentials");
 
-                if (user.LikedComments.Contains(comment))
-                    return Result.Fail("You already like comment");
+                if (user.LikedComments.Select(x => x.Id).Contains(comment.Id))
+                {
+                    user.LikedComments.Remove(comment);
+                }
+                else
+                {
+                    user.LikedComments.Add(comment);
+                }
 
-                _context.Users.Attach(user);
-
-                comment.Likes++;
-                user.LikedComments.Add(comment);
+                _context.Users.Update(user);
+                //_context.Users.Attach(user);
                 await _context.SaveChangesAsync(CancellationToken.None);
                 return Result.Ok(comment.Likes);
             }

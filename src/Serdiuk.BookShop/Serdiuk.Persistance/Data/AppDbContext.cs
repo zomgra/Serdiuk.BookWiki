@@ -10,7 +10,7 @@ namespace Serdiuk.Persistance.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-
+            ChangeTracker.AutoDetectChangesEnabled = true;
         }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Comment> Comments { get; set; }

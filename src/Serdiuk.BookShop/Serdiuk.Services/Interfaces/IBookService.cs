@@ -1,6 +1,7 @@
 ﻿using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Serdiuk.BookShop.Domain.IdentityModels;
+using Serdiuk.BookShop.Domain.Models;
 using Serdiuk.BookShop.Domain.Models.Requests.Books;
 using Serdiuk.BookShop.Domain.ViewModels;
 
@@ -11,6 +12,7 @@ namespace Serdiuk.Services.Interfaces
         Task<Result<BookViewModel>> GetBookByIdAsync(Guid id);
         Task<Result<List<BookInfoViewModel>>> GetBooksByFilterAsync(GetBooksByFilterRequest request, string userId);
         Task<Result> UploadBookCoverAsync(IFormFile photo, Guid id);
+        Task<Result> UploadBookCoverAsync(IFormFile photo, Book book);
         Task<Result> RemovePhotoToBookAsync(Guid photoId, Guid id);
         Task<Result> AddPhotoToBookAsync(IFormFile photo, Guid id);
         Task<Result> CreateBookAsync(CreateBookRequest request);

@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <None Include="Views\Account\Register.cshtml" />
+    <None Include="Views\Author\Index.cshtml" />
   </ItemGroup>
 
   <ItemGroup>

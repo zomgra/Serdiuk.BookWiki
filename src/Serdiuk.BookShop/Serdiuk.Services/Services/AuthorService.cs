@@ -1,7 +1,9 @@
-﻿using FluentResults;
+﻿using AutoMapper;
+using FluentResults;
 using Microsoft.EntityFrameworkCore;
 using Serdiuk.BookShop.Domain.Models;
 using Serdiuk.BookShop.Domain.Models.Requests.Authors;
+using Serdiuk.BookShop.Domain.ViewModels;
 using Serdiuk.Persistance;
 using Serdiuk.Services.Interfaces;
 
@@ -10,17 +12,19 @@ namespace Serdiuk.Services.Services
     public class AuthorService : IAuthorService
     {
         private readonly IAppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public AuthorService(IAppDbContext context)
+        public AuthorService(IAppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<Author> GetAuthorByIdAsync(Guid id)
+        public async Task<Result<AuthorViewModel>> GetAuthorByIdAsync(Guid id)
         {
-            var entity = await _context.Authors.FirstOrDefaultAsync(x => x.Id == id);
-            if (entity == null) throw new Exception("Bad id, author not found"); // TODO: Change to self exception
-            return entity;
+            var entity = await _context.Authors.Include(x=>x.Books).ThenInclude(x=>x.Cover).FirstOrDefaultAsync(x => x.Id == id);
+            if (entity == null) return Result.Fail("Bad id, author not found"); 
+            return Result.Ok(_mapper.Map<AuthorViewModel>(entity));
         }
 
         public async Task<Result> CreateAuthorAsync(CreateAuthorRequest request)
