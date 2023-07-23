@@ -10,6 +10,6 @@ namespace Serdiuk.Services.Interfaces
         Task<Result> CreateAuthorAsync(CreateAuthorRequest request);
         Task<Result> UpdateAuthorAsync(UpdateAuthorRequest request);
         Task<Result<List<Author>>> GetAllAuthorAsync();
-        Task<Result<AuthorViewModel>> GetAuthorByIdAsync(Guid id);
+        Task<Result<AuthorViewModel>> GetAuthorByIdAsync(Guid id,string userId);
     }
 }

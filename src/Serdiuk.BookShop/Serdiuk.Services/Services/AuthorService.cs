@@ -20,11 +20,17 @@ namespace Serdiuk.Services.Services
             _mapper = mapper;
         }
 
-        public async Task<Result<AuthorViewModel>> GetAuthorByIdAsync(Guid id)
+        public async Task<Result<AuthorViewModel>> GetAuthorByIdAsync(Guid id, string userId)
         {
-            var entity = await _context.Authors.Include(x=>x.Books).ThenInclude(x=>x.Cover).FirstOrDefaultAsync(x => x.Id == id);
-            if (entity == null) return Result.Fail("Bad id, author not found"); 
-            return Result.Ok(_mapper.Map<AuthorViewModel>(entity));
+            var entity = await _context.Authors
+            .Include(a => a.Books)
+                .ThenInclude(b => b.LikedUsers)
+                .Include(c => c.Books)
+            .Include(a => a.Books)
+             .ThenInclude(b => b.Cover)
+                .FirstOrDefaultAsync(x => x.Id == id);
+            if (entity == null) return Result.Fail("Bad id, author not found");
+            return Result.Ok(_mapper.Map<AuthorViewModel>(entity, opt => { opt.Items["UserId"] = userId; opt.Items["Mapper"] = _mapper; ; }));
         }
 
         public async Task<Result> CreateAuthorAsync(CreateAuthorRequest request)

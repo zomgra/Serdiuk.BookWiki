@@ -39,7 +39,7 @@ namespace Serdiuk.API.Controllers
         //[ResponseCache(Duration = 60)]
         public async Task<IActionResult> GetAuthorByIdAsync(Guid authorId)
         {
-            var result = await _authorService.GetAuthorByIdAsync(authorId);
+            var result = await _authorService.GetAuthorByIdAsync(authorId, UserId);
             HandleResult(result);
 
             return Ok(result.Value);

@@ -10,7 +10,9 @@
         <h3>Books</h3>
     </div>
     <div>
-        <span>Likes: </span><span id="likes-count"></span> <i id="heart-icon" class="fa fa-heart"></i>
+    </div>
+    <div>
+        <span id="likes-count"></span> <i id="heart-icon" class=""></i>
     </div>
 
 </div>
@@ -28,6 +30,9 @@
             $.ajax({
                 url: '@Url',
                 method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('access'),
+                },
                 success: function (data) {
                     includeAuthor(data);
                 }
@@ -41,23 +46,29 @@
 
             var booksContainer = $('#books-container');
             data.books.forEach(function (book) {
+                
                 var bookElement = `
-                        <div class="book col-4">
-                            <img src="data:image/png;base64 ${book.cover}" alt="Book Cover" width="100">
-                            <div>
-                                <h4>${book.name}</h4>
-                                <p>${book.description}</p>
-                            </div>
+                    <div class="book mx-2 row col-4 border">
+                    <div class="col-5 my-2">
+                        <img src="data:image/png;base64,${book.cover}" alt="Book Cover" width="100">
+                    </div>
+                            <div class="col d-flex align-items-center">
+                            <a class="h4" href='/book/index/${book.id}'>${book.name}</a>
                         </div>
-                    `;
+                        <div class='col-10'>
+                            <p style="white-space: nowrap;" class="text-truncate overflow-hidden">
+                            ${book.description}
+                        </div>
+                        <div class='col-2'>
+                            <i class="${book.youLikeIt ? 'bi bi-heart-fill' : 'bi bi-heart'}"></i>
+                        </div>
+                        </p>
+                    </div>
+                    </div>
+                `;
+                
                 booksContainer.append(bookElement);
             });
-
-            if (data.YouLikeIt) {
-                $('#heart-icon').addClass('fas'); // Добавляем класс "fas" для заполненного сердечка
-            } else {
-                $('#heart-icon').addClass('far'); // Добавляем класс "far" для пустого сердечка
-            }
         }
     </script>
 }

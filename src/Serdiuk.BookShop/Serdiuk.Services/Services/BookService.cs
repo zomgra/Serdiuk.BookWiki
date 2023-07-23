@@ -154,13 +154,7 @@ namespace Serdiuk.Services.Services
                 foreach (var book in books)
                 {
                     var userLikeBook = book.LikedUsers.Select(x => x.Id).Contains(userId);
-                    var mapBook = _mapper.Map<BookInfoViewModel>(book, opts =>
-                    {
-                        opts.AfterMap((src, dest) =>
-                        {
-                            dest.YouLikeIt = userLikeBook;
-                        });
-                    });
+                    var mapBook = _mapper.Map<BookInfoViewModel>(book, opts => opts.Items["UserId"] = userId);
                     mappedBooks.Add(mapBook);
                 }
 
