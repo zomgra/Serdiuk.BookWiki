@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using Serdiuk.BookShop.Domain.Models.Identity.DTO;
 
 namespace Serdiuk.BookWiki.Client.Controllers

@@ -5,29 +5,41 @@
 @{
     string message = String.Empty;
 
-    if(!string.IsNullOrWhiteSpace(message)){
-    <label>@message</label>
+    if (!string.IsNullOrWhiteSpace(message))
+    {
+        <label>@message</label>
     }
 }
 
+<div class="alert-danger" id="alert-error-holder" style="display:none">
+    <p id="alert-error-text"></p>
+</div>
 
 
 <div class="row">
     <form id="loginForm" class="col-3" onsubmit="login(event, @message)">
-        <input class="form-control form-text" name="email" />
-        <input class="form-control form-text" type="password" name="password" />
+        <div>
+            <label for="emailInput">Email</label>
+            <input class="form-control form-text" id="emailInput" name="email" />
+        </div>
+        <div>
+            <label for="passwordInput">Password</label>
+            <input class="form-control form-text" id="passwordInput" type="password" name="password" />
+        </div>
         <button class="btn btn-success" type="submit">Submit</button>
     </form>
 </div>
 
 @section Scripts {
-    @{string Url = _config.GetSection("API:Account").Value + "/Login";}
+    @{
+        string Url = _config.GetSection("API:Account").Value + "/Login";
+    }
     <script>
-        function login(e, message){
+        function login(e, message) {
             e.preventDefault();
             var formData = {
-                email: $("input[name='email']").val(),
-                password: $("input[name='password']").val()
+                email: $("#emailInput").val(),
+                password: $("#passwordInput").val()
             };
 
             $.ajax({
@@ -37,15 +49,18 @@
                 processData: false,
                 contentType: 'application/json',
                 success: async function (response) {
-                    
-                    if(response.result){
+
+                    if (response.result) {
                         await TokenClass.updateTokens(response.token, response.refresh)
                         window.location.href = '/'
+                    } else {
+                        $("#alert-error-holder").show();
+                        $('#alert-error-text').text(responce.errors);
                     }
                 },
                 error: function (xhr, status, error) {
-                   
-                    message = 'Error with status: '+status;
+
+                    message = 'Error with status: ' + status;
                 }
             })
         }

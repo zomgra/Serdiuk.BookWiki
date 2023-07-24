@@ -61,8 +61,11 @@
         $(document).ready(function () {
             isAuthorize();
             isAdmin();
-        });
 
+            $("#logoutButton").on("click",(function () {
+                TokenClass.logOut()
+            }));
+        });
         async function isAuthorize() {
             let isAuth = await TokenClass.canUseToken()
 

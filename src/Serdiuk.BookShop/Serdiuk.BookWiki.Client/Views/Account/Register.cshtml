@@ -5,12 +5,24 @@
 @{
     string message = string.Empty;
 }
+<div class="alert-danger" id="alert-error-holder" style="display:none">
+    <p id="alert-error-text"></p>
+</div>
 
 <div class="row">
     <form class="col-3" onsubmit="register(event,@message)">
-        <input class="form-control form-text" name="name" />
-        <input class="form-control form-text" name="email" />
-        <input class="form-control form-text" type="password" name="password" />
+        <div>
+            <label for="nameInput">Username</label>
+            <input id="nameInput" class="form-control form-text" name="name" />
+        </div>
+        <div>
+            <label for="emailInput">Email</label>
+            <input class="form-control form-text" id="emailInput" name="email" />
+        </div>
+        <div>
+            <label for="passwordInput">Password</label>
+            <input class="form-control form-text" id="passwordInput" type="password" name="password" />
+        </div>
         <button class="btn btn-success" type="submit">Submit</button>
     </form>
 </div>
@@ -21,9 +33,9 @@
         function register(e, message){
             e.preventDefault();
             var formData = {
-                name: $("input[name='name']").val(),
-                email: $("input[name='email']").val(),
-                password: $("input[name='password']").val()
+                name: $("#nameInput").val(),
+                email: $("#emailInput").val(),
+                password: $("#passwordInput").val()
             };
 
             $.ajax({
@@ -37,6 +49,10 @@
                     if(response.result){
                         TokenClass.updateTokens(response.token, response.refresh)
                         window.location.href = '/'
+                    }
+                    else{
+                        $("#alert-error-holder").show();
+                        $('#alert-error-text').text(responce.errors);
                     }
                 },
                 error: function (xhr, status, error) {

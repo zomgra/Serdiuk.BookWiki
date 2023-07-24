@@ -2,8 +2,9 @@
     <a href="/admin/home" class="col mx-1 btn btn-warning">Admin Panel</a>
 </div>
 
-<div id="isAuthDiv" style="display:none">
-    <a class="btn btn-info btn-sm" asp-action="Profile" asp-controller="Account">To Profile</a>
+<div class="row" id="isAuthDiv" style="display:none">
+    <a class="btn btn-info col-6 btn-sm mx-1" asp-action="Profile" asp-controller="Account">To Profile</a>
+    <a class="btn btn-info col-6 btn-sm mx-1" id="logoutButton">Log out</a>
 </div>
 <div id="loginDiv" class="row">
     <div class="col mx-1">

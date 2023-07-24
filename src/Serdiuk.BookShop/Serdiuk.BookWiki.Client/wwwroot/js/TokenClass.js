@@ -75,4 +75,10 @@
             return false;
         }
     }
+    static async logOut() {
+        if (confirm("Are your sure want logout?")) {
+            this.updateTokens("", "");
+            location.reload();
+        }
+    }
 }
