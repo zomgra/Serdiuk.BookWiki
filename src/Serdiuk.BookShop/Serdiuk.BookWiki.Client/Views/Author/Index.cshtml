@@ -9,12 +9,6 @@
     <div id="books-container" class="row">
         <h3>Books</h3>
     </div>
-    <div>
-    </div>
-    <div>
-        <span id="likes-count"></span> <i id="heart-icon" class=""></i>
-    </div>
-
 </div>
 
 @section Scripts{
@@ -60,7 +54,10 @@
                             ${book.description}
                         </div>
                         <div class='col-2'>
+                           <span id="likes-count">
+                           ${book.rating}
                             <i class="${book.youLikeIt ? 'bi bi-heart-fill' : 'bi bi-heart'}"></i>
+                           </span> 
                         </div>
                         </p>
                     </div>

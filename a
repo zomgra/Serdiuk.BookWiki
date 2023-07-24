@@ -1,0 +1,73 @@
+[33mcommit 5cf8da7cb580c426b2d6d61fe28b41e336317feb[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Author: Zomgra <hiban.com@gmail.com>
+Date:   Sun Jul 23 23:02:35 2023 +0200
+
+    Change Auhomepper profile, author page added
+
+[33mcommit 16e73494a25908722625930261be202b077b5eeb[m
+Author: Zomgra <hiban.com@gmail.com>
+Date:   Sun Jul 23 15:36:17 2023 +0200
+
+    Add Author page
+
+[33mcommit 854a3170d6922b583f2cd31d37168c2f708fe4f4[m
+Author: Zomgra <hiban.com@gmail.com>
+Date:   Sat Jul 22 21:17:32 2023 +0200
+
+    Full added comment like
+
+[33mcommit 65a639b6000894e5cc0d61e9f33a4a58a10e0915[m
+Author: Zomgra <hiban.com@gmail.com>
+Date:   Fri Jul 21 21:28:38 2023 +0200
+
+    Add adding comment for book and UI for comment
+
+[33mcommit fbc7896ad87a392cbd1b05d8fc86b6af268546f3[m
+Author: Zomgra <hiban.com@gmail.com>
+Date:   Wed Jul 19 18:47:39 2023 +0200
+
+    Added User profile
+
+[33mcommit 3ac7a04563fc4aca7a50eb0955a41af47cd279f0[m
+Author: Zomgra <hiban.com@gmail.com>
+Date:   Tue Jul 18 23:48:47 2023 +0200
+
+    Like and Dislike book
+
+[33mcommit 5fd33859bb7e517de834b99887010787a568e6c7[m
+Author: Zomgra <hiban.com@gmail.com>
+Date:   Thu Jul 13 10:50:49 2023 +0200
+
+    Added Delete and Upload Image from book
+
+[33mcommit 1f28c7f5e4cbe3788c82f7885a5dd06dc3475480[m
+Author: Zomgra <hiban.com@gmail.com>
+Date:   Tue Jul 11 13:25:27 2023 +0200
+
+    Add uploadImgae page, bug fix, add change book likes
+
+[33mcommit a5097633efbea4ccf4f1e23994457acddacb431c[m
+Author: Zomgra <hiban.com@gmail.com>
+Date:   Sat Jul 8 16:55:48 2023 +0200
+
+    Add admin panel, adding creation authors and books panel
+
+[33mcommit a3de5448cf80a91386327487b01d97c4b31476d8[m
+Author: Zomgra <hiban.com@gmail.com>
+Date:   Wed Jul 5 14:00:33 2023 +0200
+
+    Using jwt token in MVC with jQuery,
+    Create Amdin area,
+    Adding Authorize Checking and Admin Checking
+
+[33mcommit 4df9ed03ae6dc49e3469903efdbe045bd5682c31[m
+Author: Zomgra <hiban.com@gmail.com>
+Date:   Tue Jul 4 11:23:52 2023 +0200
+
+    Fix policy and roles
+
+[33mcommit c29f740dead094d38d4b454da33cfd80387cdba5[m
+Author: Zomgra <hiban.com@gmail.com>
+Date:   Tue Jul 4 10:22:42 2023 +0200
+
+    Git bug fix

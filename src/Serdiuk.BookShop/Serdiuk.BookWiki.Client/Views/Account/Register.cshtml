@@ -21,7 +21,7 @@
         function register(e, message){
             e.preventDefault();
             var formData = {
-                name: $("input[name='name']").val()
+                name: $("input[name='name']").val(),
                 email: $("input[name='email']").val(),
                 password: $("input[name='password']").val()
             };
@@ -35,7 +35,7 @@
                 success: function (response) {
                     
                     if(response.result){
-                        TokenManager.updateTokens(response.token, response.refresh)
+                        TokenClass.updateTokens(response.token, response.refresh)
                         window.location.href = '/'
                     }
                 },

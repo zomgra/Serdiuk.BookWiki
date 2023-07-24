@@ -59,7 +59,7 @@ namespace Serdiuk.Services.Services
             {
                 if (likedBook == null)
                 {
-                    var entity = await _context.Books.FirstOrDefaultAsync(x => x.Id == bookId);
+                    var entity = await _context.Books.Include(x=>x.LikedUsers).FirstOrDefaultAsync(x => x.Id == bookId);
                     if (entity == null) return Result.Fail("Invalid book id");
                     _context.Users.Attach(user);
                     user.LikedBooks.Add(entity);
@@ -126,7 +126,7 @@ namespace Serdiuk.Services.Services
         {
             var entity = await _context.Books.Include(x => x.Authors).Include(x => x.Comments).Include(x => x.Images).Include(x => x.Cover).FirstOrDefaultAsync(x => x.Id == id);
             if (entity == null) return Result.Fail("Book not found");
-            return Result.Ok(_mapper.Map<BookViewModel>(entity));
+            return Result.Ok(_mapper.Map<BookViewModel>(entity, opts => opts.Items["UserId"] = ""));
         }
 
         public async Task<Result<List<BookInfoViewModel>>> GetBooksByFilterAsync(GetBooksByFilterRequest request, string userId)
@@ -171,7 +171,7 @@ namespace Serdiuk.Services.Services
             try
             {
                 var books = user.LikedBooks;
-                var mappedBook = _mapper.Map<List<BookInfoViewModel>>(books);
+                var mappedBook = _mapper.Map<List<BookInfoViewModel>>(books, opts => opts.Items["UserId"] = user.Id);
                 return await Task.FromResult(Result.Ok(mappedBook));
             }
             catch (Exception e)

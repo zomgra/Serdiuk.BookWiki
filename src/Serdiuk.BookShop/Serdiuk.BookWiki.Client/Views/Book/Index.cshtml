@@ -29,7 +29,7 @@
                 },
                 success: function (data) {
                     container.empty();
-                    data.forEach(book => ViewHelper.includeBooks(book, container, '@LikeUrl'))
+                    data.forEach(async(book) => await ViewHelper.includeBooks(book, container, '@LikeUrl'))
                 },
             })
         }

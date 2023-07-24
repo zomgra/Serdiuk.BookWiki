@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\src",
+    "\\src\\Serdiuk.BookShop",
+    "\\src\\Serdiuk.BookShop\\Serdiuk.BookWiki.API",
+    "\\src\\Serdiuk.BookShop\\Serdiuk.BookWiki.Domain\\Configurations",
+    "\\src\\Serdiuk.BookShop\\Serdiuk.BookWiki.Domain\\Models",
+    "\\src\\Serdiuk.BookShop\\Serdiuk.Persistance",
+    "\\src\\Serdiuk.BookShop\\Serdiuk.Persistance\\Mapper"
+  ],
+  "SelectedNode": "\\src\\Serdiuk.BookShop\\Serdiuk.BookWiki.API\\appsettings.Development.json",
+  "PreviewInSolutionExplorer": false
+}

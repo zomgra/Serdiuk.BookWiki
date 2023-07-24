@@ -21,7 +21,7 @@ class ViewHelper {
         return normalizedArray
     }
 
-    static includeBooks(book, container, likeUrl) {
+    static async includeBooks(book, container, likeUrl) {
 
         let bookDiv = $('<div>').addClass('row border my-4 rounded border-secondary ');
 
@@ -48,7 +48,7 @@ class ViewHelper {
         let nameDiv = $('<div>').addClass('col-12 row').append(name);
         let rating = $('<p>').addClass('h6 col-6').text(`Book likes: ${book.rating}`)
         if (likeUrl)
-            if (TokenClass.canUseToken()) {
+            if (await TokenClass.canUseToken()) {
 
 
                 let like = $('<i>').addClass(`bi ${book.youLikeIt ? 'bi-heart-fill' : 'bi-heart'} col-1`).appendTo(nameDiv);

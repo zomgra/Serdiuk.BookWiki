@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Serdiuk.BookShop.Domain.Models;
 using Serdiuk.BookShop.Domain.ViewModels;
+using System.Linq;
 
 namespace Serdiuk.Persistance.Mapper
 {
@@ -25,30 +26,37 @@ namespace Serdiuk.Persistance.Mapper
             }));
 
             CreateMap<Author, AuthorViewModel>()
-                    .ForMember(dest => dest.Books, opt => opt.MapFrom((src, dest, destMember, context) =>
+                .ForMember(dest => dest.Books, opt => opt.MapFrom((src, dest, destMember, context) =>
+                {
+                    var userId = context?.Items["UserId"]?.ToString() ?? "";
+
+                    return src.Books.Select(book => new BookInfoViewModel
                     {
-                        var bookInfoViewModels = new List<BookInfoViewModel>();
 
-                        foreach (var book in src.Books)
+                        Id = book.Id,
+                        Name = book.Name,
+                        Description = book.Description,
+                        Status = book.Status,
+                        Authors = new(),
+                        Cover = book.Cover.Data,
+                        CommentsCount = book.Comments.Count,
+                        Rating = (int)book.Rating,
+                        YouLikeIt = context?.Items["UserId"] != null ? book.LikedUsers.Any(user => user.Id == userId) : false,
+                    }).ToList();
+                }))
+                    .AfterMap((src, dest, context) =>
+                    {
+                        var userId = (string)context.Items["UserId"];
+                        if (!string.IsNullOrWhiteSpace(userId))
                         {
-                            var bookInfoViewModel = new BookInfoViewModel
+                            var likedUserIds = src.Books.SelectMany(book => book.LikedUsers.Select(user => user.Id)).ToHashSet();
+
+                            foreach (var mbook in dest.Books)
                             {
-                                Id = book.Id,
-                                Name = book.Name,
-                                Description = book.Description,
-                                Status = book.Status,
-                                Authors = new(),
-                                Cover = book.Cover.Data,
-                                CommentsCount = book.Comments.Count,
-                                Rating = (int)book.Rating,
-                                YouLikeIt = book.LikedUsers.Select(x => x.Id).Contains(context.Items["UserId"]),
-                            };
-
-                            bookInfoViewModels.Add(bookInfoViewModel);
+                                mbook.YouLikeIt = likedUserIds.Contains(userId);
+                            }
                         }
-
-                        return bookInfoViewModels;
-                    }));
+                    });
 
             CreateMap<Comment, CommentViewModel>()
             .ForMember(dest => dest.Content, opt => opt.MapFrom(src => src.Content))
